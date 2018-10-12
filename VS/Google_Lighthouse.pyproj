@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{911fd46b-921f-452b-921e-0c5ea015ddfc}</ProjectGuid>
+    <ProjectHome>..\</ProjectHome>
+    <StartupFile>TkinterFensterWIP.pyw</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId />
+    <Name>Google_Lighthouse</Name>
+    <IsWindowsApplication>False</IsWindowsApplication>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Links.txt" />
+    <Content Include="reports\Für Test zwecke\Report_test.html" />
+    <Content Include="reports\Für Test zwecke\Report_test1.html" />
+    <Content Include="reports\Für Test zwecke\Report_test10.html" />
+    <Content Include="reports\Für Test zwecke\Report_test100.html" />
+    <Content Include="reports\Für Test zwecke\Report_test101.html" />
+    <Content Include="reports\Für Test zwecke\Report_test102.html" />
+    <Content Include="reports\Für Test zwecke\Report_test103.html" />
+    <Content Include="reports\Für Test zwecke\Report_test104.html" />
+    <Content Include="reports\Für Test zwecke\Report_test105.html" />
+    <Content Include="reports\Für Test zwecke\Report_test11.html" />
+    <Content Include="reports\Für Test zwecke\Report_test12.html" />
+    <Content Include="reports\Für Test zwecke\Report_test13.html" />
+    <Content Include="reports\Für Test zwecke\Report_test14.html" />
+    <Content Include="reports\Für Test zwecke\Report_test15.html" />
+    <Content Include="reports\Für Test zwecke\Report_test16.html" />
+    <Content Include="reports\Für Test zwecke\Report_test17.html" />
+    <Content Include="reports\Für Test zwecke\Report_test18.html" />
+    <Content Include="reports\Für Test zwecke\Report_test19.html" />
+    <Content Include="reports\Für Test zwecke\Report_test2.html" />
+    <Content Include="reports\Für Test zwecke\Report_test20.html" />
+    <Content Include="reports\Für Test zwecke\Report_test21.html" />
+    <Content Include="reports\Für Test zwecke\Report_test22.html" />
+    <Content Include="reports\Für Test zwecke\Report_test23.html" />
+    <Content Include="reports\Für Test zwecke\Report_test24.html" />
+    <Content Include="reports\Für Test zwecke\Report_test25.html" />
+    <Content Include="reports\Für Test zwecke\Report_test26.html" />
+    <Content Include="reports\Für Test zwecke\Report_test27.html" />
+    <Content Include="reports\Für Test zwecke\Report_test28.html" />
+    <Content Include="reports\Für Test zwecke\Report_test29.html" />
+    <Content Include="reports\Für Test zwecke\Report_test3.html" />
+    <Content Include="reports\Für Test zwecke\Report_test30.html" />
+    <Content Include="reports\Für Test zwecke\Report_test31.html" />
+    <Content Include="reports\Für Test zwecke\Report_test32.html" />
+    <Content Include="reports\Für Test zwecke\Report_test33.html" />
+    <Content Include="reports\Für Test zwecke\Report_test34.html" />
+    <Content Include="reports\Für Test zwecke\Report_test35.html" />
+    <Content Include="reports\Für Test zwecke\Report_test36.html" />
+    <Content Include="reports\Für Test zwecke\Report_test37.html" />
+    <Content Include="reports\Für Test zwecke\Report_test38.html" />
+    <Content Include="reports\Für Test zwecke\Report_test39.html" />
+    <Content Include="reports\Für Test zwecke\Report_test4.html" />
+    <Content Include="reports\Für Test zwecke\Report_test40.html" />
+    <Content Include="reports\Für Test zwecke\Report_test41.html" />
+    <Content Include="reports\Für Test zwecke\Report_test42.html" />
+    <Content Include="reports\Für Test zwecke\Report_test43.html" />
+    <Content Include="reports\Für Test zwecke\Report_test44.html" />
+    <Content Include="reports\Für Test zwecke\Report_test45.html" />
+    <Content Include="reports\Für Test zwecke\Report_test46.html" />
+    <Content Include="reports\Für Test zwecke\Report_test47.html" />
+    <Content Include="reports\Für Test zwecke\Report_test48.html" />
+    <Content Include="reports\Für Test zwecke\Report_test49.html" />
+    <Content Include="reports\Für Test zwecke\Report_test5.html" />
+    <Content Include="reports\Für Test zwecke\Report_test50.html" />
+    <Content Include="reports\Für Test zwecke\Report_test51.html" />
+    <Content Include="reports\Für Test zwecke\Report_test52.html" />
+    <Content Include="reports\Für Test zwecke\Report_test53.html" />
+    <Content Include="reports\Für Test zwecke\Report_test54.html" />
+    <Content Include="reports\Für Test zwecke\Report_test55.html" />
+    <Content Include="reports\Für Test zwecke\Report_test56.html" />
+    <Content Include="reports\Für Test zwecke\Report_test57.html" />
+    <Content Include="reports\Für Test zwecke\Report_test58.html" />
+    <Content Include="reports\Für Test zwecke\Report_test59.html" />
+    <Content Include="reports\Für Test zwecke\Report_test6.html" />
+    <Content Include="reports\Für Test zwecke\Report_test60.html" />
+    <Content Include="reports\Für Test zwecke\Report_test61.html" />
+    <Content Include="reports\Für Test zwecke\Report_test62.html" />
+    <Content Include="reports\Für Test zwecke\Report_test63.html" />
+    <Content Include="reports\Für Test zwecke\Report_test64.html" />
+    <Content Include="reports\Für Test zwecke\Report_test65.html" />
+    <Content Include="reports\Für Test zwecke\Report_test66.html" />
+    <Content Include="reports\Für Test zwecke\Report_test67.html" />
+    <Content Include="reports\Für Test zwecke\Report_test68.html" />
+    <Content Include="reports\Für Test zwecke\Report_test69.html" />
+    <Content Include="reports\Für Test zwecke\Report_test7.html" />
+    <Content Include="reports\Für Test zwecke\Report_test70.html" />
+    <Content Include="reports\Für Test zwecke\Report_test71.html" />
+    <Content Include="reports\Für Test zwecke\Report_test72.html" />
+    <Content Include="reports\Für Test zwecke\Report_test73.html" />
+    <Content Include="reports\Für Test zwecke\Report_test74.html" />
+    <Content Include="reports\Für Test zwecke\Report_test75.html" />
+    <Content Include="reports\Für Test zwecke\Report_test76.html" />
+    <Content Include="reports\Für Test zwecke\Report_test77.html" />
+    <Content Include="reports\Für Test zwecke\Report_test78.html" />
+    <Content Include="reports\Für Test zwecke\Report_test79.html" />
+    <Content Include="reports\Für Test zwecke\Report_test8.html" />
+    <Content Include="reports\Für Test zwecke\Report_test80.html" />
+    <Content Include="reports\Für Test zwecke\Report_test81.html" />
+    <Content Include="reports\Für Test zwecke\Report_test82.html" />
+    <Content Include="reports\Für Test zwecke\Report_test83.html" />
+    <Content Include="reports\Für Test zwecke\Report_test84.html" />
+    <Content Include="reports\Für Test zwecke\Report_test85.html" />
+    <Content Include="reports\Für Test zwecke\Report_test86.html" />
+    <Content Include="reports\Für Test zwecke\Report_test87.html" />
+    <Content Include="reports\Für Test zwecke\Report_test88.html" />
+    <Content Include="reports\Für Test zwecke\Report_test89.html" />
+    <Content Include="reports\Für Test zwecke\Report_test9.html" />
+    <Content Include="reports\Für Test zwecke\Report_test90.html" />
+    <Content Include="reports\Für Test zwecke\Report_test91.html" />
+    <Content Include="reports\Für Test zwecke\Report_test92.html" />
+    <Content Include="reports\Für Test zwecke\Report_test93.html" />
+    <Content Include="reports\Für Test zwecke\Report_test94.html" />
+    <Content Include="reports\Für Test zwecke\Report_test95.html" />
+    <Content Include="reports\Für Test zwecke\Report_test96.html" />
+    <Content Include="reports\Für Test zwecke\Report_test97.html" />
+    <Content Include="reports\Für Test zwecke\Report_test98.html" />
+    <Content Include="reports\Für Test zwecke\Report_test99.html" />
+    <Content Include="reports\Für Test zwecke\test-.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-drug-discovery-optimization-hit-to-lead-qualification.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-drug-discovery-optimization-peptide-discovery.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-drug-discovery-optimization-peptide-optimization.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-drug-discovery-optimization.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-immunotherapy-vaccines-.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-projects-chronic-fatigue-syndrome.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-projects-detektivir.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-projects-proteome-tools.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-projects.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-proteomics-functional-proteomics.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-proteomics-mass-spectrometry-based-proteomics.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-proteomics.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-technologies-know-how-bioinformatics-cheminformatics-molecular-modeling.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-technologies-know-how-mass-spectrometry-based-discovery.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-technologies-know-how-medicinal-chemistry.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-technologies-know-how-peptide-chemistry.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-technologies-know-how-peptide-elisa-based-validation.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-technologies-know-how-peptide-microarray-based-profiling.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-technologies-know-how-ultra-high-throughput-synthesis.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations-technologies-know-how.html" />
+    <Content Include="reports\Report_www.jpt.com-collaborations102.html" />
+    <Content Include="reports\Report_www.jpt.com-company-career.html" />
+    <Content Include="reports\Report_www.jpt.com-company-history.html" />
+    <Content Include="reports\Report_www.jpt.com-company-imprint.html" />
+    <Content Include="reports\Report_www.jpt.com-company-partners.html" />
+    <Content Include="reports\Report_www.jpt.com-company-privacy-policy.html" />
+    <Content Include="reports\Report_www.jpt.com-company-qms.html" />
+    <Content Include="reports\Report_www.jpt.com-company-team.html" />
+    <Content Include="reports\Report_www.jpt.com-company-technologies.html" />
+    <Content Include="reports\Report_www.jpt.com-company-terms-conditions.html" />
+    <Content Include="reports\Report_www.jpt.com-company.html" />
+    <Content Include="reports\Report_www.jpt.com-indications-immune-monitoring-.html" />
+    <Content Include="reports\Report_www.jpt.com-indications-immunotherapy-and-cell-therapy-.html" />
+    <Content Include="reports\Report_www.jpt.com-pr-news-jpt-launches-the-human-proteome-peptide-catalog-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-absolutely-quantified-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-acetylome-acetyltransferase-deacetylase-microarrays-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-amyloid-beta-a4-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-antigen-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-bio-and-cheminformatics-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-biotides-biotinylated-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-c-terminal-modifications-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-click-chemistry-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-clinical-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-custom-peptide-synthesis-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-cyclic-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-cysteine-modifications-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-enzyme-substrate-peptide-microarrays-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-enzyme-substrate-sets-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-epitope-discovery-service-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-fluorescent-dye-labeled-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-further-post-translational-modifications-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-glycopeptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-histone-code-analysis-service-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-histone-code-peptides-microarray-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-isotope-labeled-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-link-spacer-peg-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-long-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-lysine-modifications-arginine-modifications-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-methionine-modifications-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-methylated-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-mhc-multimers-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-micro-scale-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-n-terminal-modifications-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-pepmix-peptide-pools-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-pepspots-peptides-on-cellulose-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-pepstar-peptide-microarrays-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-peptide-conjugates-klh-bsa-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-peptide-dimers-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-peptide-elisa-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-peptide-modifications-and-specialty-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-peptide-pooling-libraries-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-peptidomimetics-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-peptrack-peptide-libraries-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-phosphopeptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-proteasespots-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-protein-conjugations-immunogenic-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-protein-interaction-screen-on-peptide-matrix-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-protein-protein-interaction-profiling-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-proteomics-peptide-standards-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-ptm-reference-peptide-standards-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-ptms-post-translational-modifications-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-quenched-fret-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-replitope-catalog-peptide-microarrays-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-single-substrate-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-spiketides-sets-spikemix-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-spotmix-antigen-discovery-pools-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-sulfated-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-t-cell-assay-services-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-tagged-peptides-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-three-step-seromarker-profiling-service-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-ultra-peptide-libraries-for-sequence-diversity-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-universal-t-cell-assay-standard-ters-kit-.html" />
+    <Content Include="reports\Report_www.jpt.com-products-unnatural-amino-acids-.html" />
+    <Content Include="reports\Report_www.jpt.com-support-contact-contact.html" />
+    <Content Include="reports\Report_www.jpt.com-support-contact-distributors-.html" />
+    <Content Include="reports\Report_www.jpt.com-support-contact-faqs-faq-how-to-request-a-quote.html" />
+    <Content Include="reports\Report_www.jpt.com-support-contact-faqs-faq-orders-shipments-.html" />
+    <Content Include="reports\Report_www.jpt.com-support-contact-location-map.html" />
+    <Content Include="Start.bat" />
+    <Content Include="VS\.vs\Google Lighthouse\v15\_suo.doc" />
+    <Content Include="VS\.vs\Google_Lighthouse\v15\_suo.doc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Script.py" />
+    <Compile Include="TkinterFensterWIP.pyw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="reports\" />
+    <Folder Include="reports\Für Test zwecke\" />
+    <Folder Include="VS\" />
+    <Folder Include="VS\.vs\" />
+    <Folder Include="VS\.vs\Google Lighthouse\" />
+    <Folder Include="VS\.vs\Google Lighthouse\v15\" />
+    <Folder Include="VS\.vs\Google_Lighthouse\" />
+    <Folder Include="VS\.vs\Google_Lighthouse\v15\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>
