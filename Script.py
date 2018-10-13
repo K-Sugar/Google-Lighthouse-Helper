@@ -1,3 +1,5 @@
+# Version 1.0 (Writen with Python 3.7) // 
+
 import os
 import time
 import sys
@@ -90,7 +92,7 @@ for url in file:
 
     else:
         os.system(clear)
-    
+
     os.system(clear)
     os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path=C:/Users/sugar/Desktop/Google_Lighthouse_TEST/Report.html {}".format(url))
     links_done += 1
@@ -98,17 +100,17 @@ for url in file:
     filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
     try:
         os.rename("Report.html" , str(path) + "Report_" + str(filename) + ".html")                                              # Umbennen der "Report.html"
-    
+
     except OSError:
         if keepfiles == 1:
             os.remove(str(path) + "Report_" + str(filename) + ".html")                                                          # Falls Daten ueberschieben werden sollen wird hier die alte Datei geloescht
             os.rename("Report.html" , str(path) + "Report_" + str(filename) + ".html")
             print("Datei wurde ersetzt!")
             replacedfiles += 1
-        
+
         elif keepfiles == 2:
             while True:                                                                                                         # Schleife um Daten eine Zahl am ende zu geben damit mehrere existieren koennen
-                try:        
+                try:
                     os.rename("Report.html" , str(path) + "Report_" + str(filename) + str(filenumber) + ".html")
                     break
 
@@ -121,4 +123,3 @@ for url in file:
         break
     else:
         continue
-
