@@ -1,3 +1,5 @@
+#Version 0.6
+
 try:
     from tkinter import *
     from tkinter import filedialog
@@ -15,7 +17,7 @@ CWD = os.getcwd()
 def file_open():                                                                                                                                                # Function to call the Filedialog to then set the Var. for Lighthouse (DOESNT WORK FFS)
     global text
     global linkfile
-    
+
     linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
     if linkfile is None:
         return
@@ -63,6 +65,6 @@ Start_Ligthouse.place(x=850, y=312)
 Quit_All = Button(root, text="Beenden", command=quit_all)
 Quit_All.place(x=850, y=0)
 
-root.mainloop()  
+root.mainloop()
 
 raise SystemExit(1)
