@@ -234,6 +234,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Script.py" />
+    <Compile Include="TkinterFensterWIP.py" />
     <Compile Include="TkinterFensterWIP.pyw" />
   </ItemGroup>
   <ItemGroup>

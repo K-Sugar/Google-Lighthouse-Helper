@@ -1,4 +1,4 @@
-#Version 0.6
+#Version 0.7
 
 try:
     from tkinter import *
@@ -16,12 +16,13 @@ CWD = os.getcwd()
 
 def file_open():                                                                                                                                                # Function to call the Filedialog to then set the Var. for Lighthouse (DOESNT WORK FFS)
     global text
-    global linkfile
+    global file
 
     linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
     if linkfile is None:
         return
-    global links
+    file = open(linkfile.name, mode="r")
+
     links = linkfile.read()
     text.config(state="normal")
     text.delete(0.0,END)
@@ -29,13 +30,20 @@ def file_open():                                                                
     text.config(state="disable")
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
-    for url in links:
+    global file
+    global reportlocation
+    for url in file:
         print(url)
-        print(".")
+        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/Report.html {}".format(reportlocation,url))
 
 def quit_all():                                                                                                                                                 # Explains itself
     root.destroy()
     raise SystemExit(1)
+
+def report_location():
+    global reportlocation
+    reportlocation = filedialog.askdirectory()
+    print(reportlocation)
 
 
 root = Tk()
@@ -55,9 +63,11 @@ settings.grid(row=1, column=2)
 
 ###Buttons###
 
-
 OpenLink = Button(text, text="Linkdatei öffnen", command=file_open)
 OpenLink.place(in_=text, x=305, y=312)
+
+ReportLocation = Button(root, text="Select Savelocation", command=report_location)
+ReportLocation.place(x=750, y=150)
 
 Start_Ligthouse = Button(root, text="Starten", command=start_lighthouse)
 Start_Ligthouse.place(x=850, y=312)
@@ -66,5 +76,3 @@ Quit_All = Button(root, text="Beenden", command=quit_all)
 Quit_All.place(x=850, y=0)
 
 root.mainloop()
-
-raise SystemExit(1)
