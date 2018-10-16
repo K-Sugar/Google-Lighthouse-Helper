@@ -1,18 +1,23 @@
-#Version 0.7
+#Version 0.8
 
 try:
     from tkinter import *
     from tkinter import filedialog
+    from threading import *
+    import os
+
 except:
     from Tkinter import *
     from Tkinter import filedialog
+    from threading import *
+    import os
 
-import os
+####### Variables #######
 
 CWD = os.getcwd()
-
-
-
+keepfiles = 2
+filenumber = 0
+instantkill = False
 
 def file_open():                                                                                                                                                # Function to call the Filedialog to then set the Var. for Lighthouse (DOESNT WORK FFS)
     global text
@@ -30,21 +35,44 @@ def file_open():                                                                
     text.config(state="disable")
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
+    global filenumber
     global file
     global reportlocation
+    global instantkill
     for url in file:
         print(url)
-        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/Report.html {}".format(reportlocation,url))
+        filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
+        
+        if os.path.isfile(reportlocation + "/" + filename + ".html"):
+            print("EXISTS!")
+            filenumber = 2
+            while True:                                                                                                                                         # True muss durch Keepfiles ersetzt werden! 
+                newfilename = filename + "{}".format(filenumber)
+                if not os.path.isfile(reportlocation + "/" + newfilename + ".html"):
+                    filename = newfilename
+                    break
+                filenumber += 1
+        if instantkill:
+            break
+        
+        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
+        
+
+
+
 
 def quit_all():                                                                                                                                                 # Explains itself
+    global instantkill
     root.destroy()
-    raise SystemExit(1)
+    instantkill = True
+    SystemExit(0)
 
 def report_location():
     global reportlocation
     reportlocation = filedialog.askdirectory()
     print(reportlocation)
 
+lighthouse_thread = Thread(target=start_lighthouse, daemon=True)
 
 root = Tk()
 root.geometry("900x340")
@@ -69,10 +97,12 @@ OpenLink.place(in_=text, x=305, y=312)
 ReportLocation = Button(root, text="Select Savelocation", command=report_location)
 ReportLocation.place(x=750, y=150)
 
-Start_Ligthouse = Button(root, text="Starten", command=start_lighthouse)
+Start_Ligthouse = Button(root, text="Starten", command=lighthouse_thread.start)
 Start_Ligthouse.place(x=850, y=312)
 
 Quit_All = Button(root, text="Beenden", command=quit_all)
 Quit_All.place(x=850, y=0)
+
+Keepfiles_Check = Checkbutton(master = settings, text="Keep duplicate files")
 
 root.mainloop()
