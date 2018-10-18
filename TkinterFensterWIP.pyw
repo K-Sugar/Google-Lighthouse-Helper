@@ -42,11 +42,11 @@ def start_lighthouse():                                                         
     for url in file:
         print(url)
         filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
-        
+
         if os.path.isfile(reportlocation + "/" + filename + ".html"):
             print("EXISTS!")
             filenumber = 2
-            while True:                                                                                                                                         # True muss durch Keepfiles ersetzt werden! 
+            while True:                                                                                                                                         # True muss durch Keepfiles ersetzt werden!
                 newfilename = filename + "{}".format(filenumber)
                 if not os.path.isfile(reportlocation + "/" + newfilename + ".html"):
                     filename = newfilename
@@ -54,9 +54,9 @@ def start_lighthouse():                                                         
                 filenumber += 1
         if instantkill:
             break
-        
+
         os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
-        
+
 
 
 
@@ -74,22 +74,33 @@ def report_location():
 
 lighthouse_thread = Thread(target=start_lighthouse, daemon=True)
 
+### Main Window ###
+
 root = Tk()
 root.geometry("900x340")
 root.config(background="gray26")
+root.title("SEO Helper")
 root.resizable(width=False, height=False)
 
+### Frames ###
+
+settings=LabelFrame(root, text="Einstellungen")
+settings.config(width=495, height=340)
+settings.grid(row=1, column=2)
+settings.grid_propagate(False)
+
+Keepfile_Frame=LabelFrame(settings, text="Keep files if Duplicate?")
+Keepfile_Frame.config(width=150, height=200)
+Keepfile_Frame.grid(in_=settings, row = 1, column = 1)
+
+
+### Widgets ###
 
 text=Text(root)
 text.config(state='disable', wrap="none", width=50, height=21, background="gray64", foreground="black")
 text.grid(row=1, column=1)
 
-
-settings=LabelFrame(root, text="Einstellungen")
-settings.config(width=495, height=340)
-settings.grid(row=1, column=2)
-
-###Buttons###
+        ###Buttons###
 
 OpenLink = Button(text, text="Linkdatei öffnen", command=file_open)
 OpenLink.place(in_=text, x=305, y=312)
@@ -101,8 +112,17 @@ Start_Ligthouse = Button(root, text="Starten", command=lighthouse_thread.start)
 Start_Ligthouse.place(x=850, y=312)
 
 Quit_All = Button(root, text="Beenden", command=quit_all)
-Quit_All.place(x=850, y=0)
+Quit_All.place(in_=settings, x=850, y=0)
 
-Keepfiles_Check = Checkbutton(master = settings, text="Keep duplicate files")
+
+        ### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
+
+
+
+Keepfiles_Check = Checkbutton(settings, text="Keep duplicate files")
+Keepfiles_Check.grid(in_=Keepfile_Frame, row = 1, column = 1)
+
+
+
 
 root.mainloop()
