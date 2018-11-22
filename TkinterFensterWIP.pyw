@@ -12,12 +12,17 @@ except:
     from threading import *
     import os
 
-####### Variables #######
+### Variables ###
 
 CWD = os.getcwd()
 keepfiles = 2
 filenumber = 0
 instantkill = False
+
+#####################################################################
+
+
+### Defs ###
 
 def file_open():                                                                                                                                                # Function to call the Filedialog to then set the Var. for Lighthouse (DOESNT WORK FFS)
     global text
@@ -29,16 +34,17 @@ def file_open():                                                                
     file = open(linkfile.name, mode="r")
 
     links = linkfile.read()
-    text.config(state="normal")
-    text.delete(0.0,END)
+    #text.config(state="normal")
+    #text.delete(0.0,END)
     text.insert(END,links)
-    text.config(state="disable")
+    #text.config(state="disable")
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
     global filenumber
     global file
     global reportlocation
     global instantkill
+    
     for url in file:
         print(url)
         filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
@@ -59,8 +65,6 @@ def start_lighthouse():                                                         
 
 
 
-
-
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
     root.destroy()
@@ -72,7 +76,15 @@ def report_location():
     reportlocation = filedialog.askdirectory()
     print(reportlocation)
 
+#####################################################################
+
+
+### Threads ###
+
 lighthouse_thread = Thread(target=start_lighthouse, daemon=True)
+
+#####################################################################
+
 
 ### Main Window ###
 
@@ -81,6 +93,9 @@ root.geometry("900x340")
 root.config(background="gray26")
 root.title("SEO Helper")
 root.resizable(width=False, height=False)
+
+#####################################################################
+
 
 ### Frames ###
 
@@ -93,14 +108,19 @@ Keepfile_Frame=LabelFrame(settings, text="Keep files if Duplicate?")
 Keepfile_Frame.config(width=150, height=200)
 Keepfile_Frame.grid(in_=settings, row = 1, column = 1)
 
+#####################################################################
+
 
 ### Widgets ###
 
 text=Text(root)
-text.config(state='disable', wrap="none", width=50, height=21, background="gray64", foreground="black")
+text.config(wrap="none", width=50, height=21, background="gray64", foreground="black")
 text.grid(row=1, column=1)
 
-        ###Buttons###
+#####################################################################
+
+
+###Buttons###
 
 OpenLink = Button(text, text="Linkdatei öffnen", command=file_open)
 OpenLink.place(in_=text, x=305, y=312)
@@ -114,15 +134,15 @@ Start_Ligthouse.place(x=850, y=312)
 Quit_All = Button(root, text="Beenden", command=quit_all)
 Quit_All.place(in_=settings, x=850, y=0)
 
+#####################################################################
 
-        ### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
 
-
+### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
 
 Keepfiles_Check = Checkbutton(settings, text="Keep duplicate files")
 Keepfiles_Check.grid(in_=Keepfile_Frame, row = 1, column = 1)
 
-
+#####################################################################
 
 
 root.mainloop()
