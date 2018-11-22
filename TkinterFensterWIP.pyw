@@ -36,19 +36,38 @@ root.resizable(width=False, height=False)
 
 #####################################################################
 
+def quit_all():                                                                                                                                                 # Explains itself
+    global instantkill
+    root.destroy()
+    instantkill = True
+    SystemExit(0)
 
 ### First run check ###
 while True:
     try:
         os.system("npm -v")
-        root.deiconify()
+        answer = messagebox.askyesno("Warning!","It seems like you don't have the Google lighthouse Package installed. Should the program install it for you?")
+        if answer == True:
+            print("installed")
+        elif answer == False:
+            print("quit")
+            quit_all()
+
+        try:
+            os.system("npm show lighthouse version")
+            root.deiconify()
+
+        except OSError:
+            #messagebox.showwarning("Warning","It seems like you don't have the Google lighthouse Package installed. The programm will now install it for you.")
+            answer = messagebox.askokcancel("Question","Do you want to open this file?")
+
+        
         break
         
         
     except OSError:
         messagebox.showwarning("Warning","It seems like you don't have NPM installed. Please install it and restart the Program!")
-        root.deiconify()  
-        break
+        quit_all()
 
 #####################################################################
 
@@ -65,7 +84,7 @@ def file_open():                                                                
 
     links = linkfile.read()
     #text.config(state="normal")
-    #text.delete(0.0,END)
+    text.delete(0.0,END)
     text.insert(END,links)
     #text.config(state="disable")
 
@@ -95,11 +114,7 @@ def start_lighthouse():                                                         
 
 
 
-def quit_all():                                                                                                                                                 # Explains itself
-    global instantkill
-    root.destroy()
-    instantkill = True
-    SystemExit(0)
+
 
 def report_location():
     global reportlocation
@@ -151,7 +166,7 @@ Start_Ligthouse = Button(root, text="Starten", command=lighthouse_thread.start)
 Start_Ligthouse.place(x=850, y=312)
 
 Quit_All = Button(root, text="Beenden", command=quit_all)
-Quit_All.place(in_=settings, x=850, y=0)
+Quit_All.place(x=835, y=15)
 
 #####################################################################
 
