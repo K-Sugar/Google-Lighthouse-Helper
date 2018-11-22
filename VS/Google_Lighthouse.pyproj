@@ -228,13 +228,11 @@
     <Content Include="reports\Report_www.jpt.com-support-contact-faqs-faq-how-to-request-a-quote.html" />
     <Content Include="reports\Report_www.jpt.com-support-contact-faqs-faq-orders-shipments-.html" />
     <Content Include="reports\Report_www.jpt.com-support-contact-location-map.html" />
-    <Content Include="Start.bat" />
     <Content Include="VS\.vs\Google Lighthouse\v15\_suo.doc" />
     <Content Include="VS\.vs\Google_Lighthouse\v15\_suo.doc" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Script.py" />
-    <Compile Include="TkinterFensterWIP.py" />
     <Compile Include="TkinterFensterWIP.pyw" />
   </ItemGroup>
   <ItemGroup>

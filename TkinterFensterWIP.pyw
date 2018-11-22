@@ -3,14 +3,17 @@
 try:
     from tkinter import *
     from tkinter import filedialog
+    from tkinter import messagebox
     from threading import *
     import os
 
 except:
     from Tkinter import *
     from Tkinter import filedialog
+    from Tkinter import messagebox
     from threading import *
     import os
+
 
 ### Variables ###
 
@@ -21,6 +24,33 @@ instantkill = False
 
 #####################################################################
 
+
+### Main Window ###
+
+root = Tk()
+root.withdraw()
+root.geometry("900x340")
+root.config(background="gray26")
+root.title("SEO Helper")
+root.resizable(width=False, height=False)
+
+#####################################################################
+
+
+### First run check ###
+while True:
+    try:
+        os.system("npm -v")
+        root.deiconify()
+        break
+        
+        
+    except OSError:
+        messagebox.showwarning("Warning","It seems like you don't have NPM installed. Please install it and restart the Program!")
+        root.deiconify()  
+        break
+
+#####################################################################
 
 ### Defs ###
 
@@ -82,17 +112,6 @@ def report_location():
 ### Threads ###
 
 lighthouse_thread = Thread(target=start_lighthouse, daemon=True)
-
-#####################################################################
-
-
-### Main Window ###
-
-root = Tk()
-root.geometry("900x340")
-root.config(background="gray26")
-root.title("SEO Helper")
-root.resizable(width=False, height=False)
 
 #####################################################################
 
