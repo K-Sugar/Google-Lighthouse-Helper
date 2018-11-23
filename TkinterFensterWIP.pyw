@@ -4,6 +4,7 @@ try:
     from tkinter import *
     from tkinter import filedialog
     from tkinter import messagebox
+    import configparser 
     from threading import *
     import os
 
@@ -12,6 +13,7 @@ except:
     from Tkinter import filedialog
     from Tkinter import messagebox
     from threading import *
+    import configparser
     import os
 
 
@@ -21,55 +23,10 @@ CWD = os.getcwd()
 keepfiles = 2
 filenumber = 0
 instantkill = False
+config = configparser.ConfigParser()
 
 #####################################################################
 
-
-### Main Window ###
-
-root = Tk()
-root.withdraw()
-root.geometry("900x340")
-root.config(background="gray26")
-root.title("SEO Helper")
-root.resizable(width=False, height=False)
-
-#####################################################################
-
-def quit_all():                                                                                                                                                 # Explains itself
-    global instantkill
-    root.destroy()
-    instantkill = True
-    SystemExit(0)
-
-### First run check ###
-while True:
-    try:
-        os.system("npm -v")
-        answer = messagebox.askyesno("Warning!","It seems like you don't have the Google lighthouse Package installed. Should the program install it for you?")
-        if answer == True:
-            print("installed")
-        elif answer == False:
-            print("quit")
-            quit_all()
-
-        try:
-            os.system("npm show lighthouse version")
-            root.deiconify()
-
-        except OSError:
-            #messagebox.showwarning("Warning","It seems like you don't have the Google lighthouse Package installed. The programm will now install it for you.")
-            answer = messagebox.askokcancel("Question","Do you want to open this file?")
-
-        
-        break
-        
-        
-    except OSError:
-        messagebox.showwarning("Warning","It seems like you don't have NPM installed. Please install it and restart the Program!")
-        quit_all()
-
-#####################################################################
 
 ### Defs ###
 
@@ -87,6 +44,7 @@ def file_open():                                                                
     text.delete(0.0,END)
     text.insert(END,links)
     #text.config(state="disable")
+
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
     global filenumber
@@ -113,13 +71,29 @@ def start_lighthouse():                                                         
         os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
 
 
-
+def quit_all():                                                                                                                                                 # Explains itself
+    global instantkill
+    root.destroy()
+    instantkill = True
+    SystemExit(0)
 
 
 def report_location():
     global reportlocation
     reportlocation = filedialog.askdirectory()
     print(reportlocation)
+
+#####################################################################
+
+
+### Window ###
+
+root = Tk()
+root.withdraw()
+root.geometry("900x340")
+root.config(background="gray26")
+root.title("SEO Helper")
+root.resizable(width=False, height=False)
 
 #####################################################################
 
@@ -175,6 +149,48 @@ Quit_All.place(x=835, y=15)
 
 Keepfiles_Check = Checkbutton(settings, text="Keep duplicate files")
 Keepfiles_Check.grid(in_=Keepfile_Frame, row = 1, column = 1)
+
+#####################################################################
+
+
+### First run check ###
+config.read("config.ini")
+print(config["DEFAULT"].getboolean("FirstRun"))
+
+
+while True:
+
+    if config["DEFAULT"].getboolean("FirstRun") == True:
+
+        try:
+            os.system("npm -v")
+            
+            try:
+                os.system("npm show lighthouse version")
+                break
+                
+
+            
+            except OSError:
+                answer = messagebox.askyesno("Warning!","It seems like you don't have the Google lighthouse Package installed. Should the program install it for you?")
+
+                if answer == True:
+                    print("installed")
+                    root.deiconify()
+
+                elif answer == False:
+                    print("quit")
+                    root.deiconify()
+                    quit_all()
+
+            break
+                
+        except OSError:
+            messagebox.showwarning("Warning","It seems like you don't have NPM installed. Please install it and restart the Program!")
+            quit_all()
+root.deiconify()
+
+
 
 #####################################################################
 
