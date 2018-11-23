@@ -6,6 +6,9 @@
 - Python 3.7 or later
 - Google Lighthouse package for NPM (will be installed by programm if neccessary)
 
+## Instalation guide
+After you have installed all of the Requirements there is no further installation needed! Just clone the repository and start "Google Lighthouse Helper" if something is missing the programm will tell you.
+
 ## What does it do?
 
 This script is for creating Google Lighthouse reports of a list of links. It wont improve the performance of the pages at all.
