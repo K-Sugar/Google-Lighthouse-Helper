@@ -188,6 +188,7 @@ while True:
         except OSError:
             messagebox.showwarning("Warning","It seems like you don't have NPM installed. Please install it and restart the Program!")
             quit_all()
+
 root.deiconify()
 
 
