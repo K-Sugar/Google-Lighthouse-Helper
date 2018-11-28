@@ -4,7 +4,7 @@ try:
     from tkinter import *
     from tkinter import filedialog
     from tkinter import messagebox
-    import configparser 
+    import configparser
     from threading import *
     import os
 
@@ -48,28 +48,40 @@ def file_open():                                                                
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
     global filenumber
-    global file
+
     global reportlocation
     global instantkill
-    
-    for url in file:
-        print(url)
-        filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
 
-        if os.path.isfile(reportlocation + "/" + filename + ".html"):
-            print("EXISTS!")
-            filenumber = 2
-            while True:                                                                                                                                         # True muss durch Keepfiles ersetzt werden!
-                newfilename = filename + "{}".format(filenumber)
-                if not os.path.isfile(reportlocation + "/" + newfilename + ".html"):
-                    filename = newfilename
-                    break
-                filenumber += 1
-        if instantkill:
-            break
+    try:
 
-        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
+        global file
+        CheckThread()
+        for url in file:
+            print(url)
+            filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
 
+            if os.path.isfile(reportlocation + "/" + filename + ".html"):
+                print("EXISTS!")
+                filenumber = 2
+                while True:                                                                                                                                         # True muss durch Keepfiles ersetzt werden!
+                    newfilename = filename + "{}".format(filenumber)
+                    if not os.path.isfile(reportlocation + "/" + newfilename + ".html"):
+                        filename = newfilename
+                        break
+                    filenumber += 1
+            if instantkill:
+                break
+
+            os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
+    except NameError:
+        print("Link file not found!")
+
+
+def CheckThread():
+    if lighthouse_thread.is_alive == False:
+        lighthouse_thread.run()
+    elif lighthouse_thread.is_alive:
+        pass
 
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
@@ -100,7 +112,7 @@ root.resizable(width=False, height=False)
 
 ### Threads ###
 
-lighthouse_thread = Thread(target=start_lighthouse, daemon=True)
+lighthouse_thread = Thread(daemon=True)
 
 #####################################################################
 
@@ -164,13 +176,13 @@ while True:
 
         try:
             os.system("npm -v")
-            
+
             try:
                 os.system("npm show lighthouse version")
                 break
-                
 
-            
+
+
             except OSError:
                 answer = messagebox.askyesno("Warning!","It seems like you don't have the Google lighthouse Package installed. Should the program install it for you?")
 
@@ -184,7 +196,7 @@ while True:
                     quit_all()
 
             break
-                
+
         except OSError:
             messagebox.showwarning("Warning","It seems like you don't have NPM installed. Please install it and restart the Program!")
             quit_all()
