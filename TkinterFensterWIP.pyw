@@ -4,14 +4,9 @@ try:
     from tkinter import *
     from tkinter import filedialog
     from tkinter import messagebox
-<<<<<<< HEAD
-    import configparser
-    from threading import *
-=======
     import configparser 
     import threading
     import _thread
->>>>>>> 54641a9d78f6f1ab85bfb75708a0b773de2ea779
     import os
 
 except:
@@ -62,36 +57,6 @@ def file_open():                                                                
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
     global filenumber
-<<<<<<< HEAD
-
-    global reportlocation
-    global instantkill
-
-    try:
-
-        global file
-        CheckThread()
-        for url in file:
-            print(url)
-            filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
-
-            if os.path.isfile(reportlocation + "/" + filename + ".html"):
-                print("EXISTS!")
-                filenumber = 2
-                while True:                                                                                                                                         # True muss durch Keepfiles ersetzt werden!
-                    newfilename = filename + "{}".format(filenumber)
-                    if not os.path.isfile(reportlocation + "/" + newfilename + ".html"):
-                        filename = newfilename
-                        break
-                    filenumber += 1
-            if instantkill:
-                break
-
-            os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
-    except NameError:
-        print("Link file not found!")
-
-=======
     global reportlocation
     global instantkill
     global file
@@ -125,10 +90,9 @@ def CheckThread():
     elif lighthouse_thread.is_alive() == False:
         lighthouse_thread.start()
         print("Thread has been started!")
-        
-        
-        
->>>>>>> 54641a9d78f6f1ab85bfb75708a0b773de2ea779
+
+
+
 
 def CheckThread():
     if lighthouse_thread.is_alive == False:
@@ -160,7 +124,7 @@ root.config(background="gray26")
 root.title("SEO Helper")
 root.resizable(width=False, height=False)
 
-<<<<<<< HEAD
+
 #####################################################################
 
 
@@ -170,8 +134,6 @@ lighthouse_thread = Thread(daemon=True)
 
 #####################################################################
 
-=======
->>>>>>> 54641a9d78f6f1ab85bfb75708a0b773de2ea779
 
 ### Frames ###
 
