@@ -1,18 +1,25 @@
-#Version 0.8
+#Version 0.8.5
 
 try:
     from tkinter import *
     from tkinter import filedialog
     from tkinter import messagebox
+<<<<<<< HEAD
     import configparser
     from threading import *
+=======
+    import configparser 
+    import threading
+    import _thread
+>>>>>>> 54641a9d78f6f1ab85bfb75708a0b773de2ea779
     import os
 
 except:
     from Tkinter import *
     from Tkinter import filedialog
     from Tkinter import messagebox
-    from threading import *
+    import thread
+    import threading
     import configparser
     import os
 
@@ -28,6 +35,13 @@ config = configparser.ConfigParser()
 #####################################################################
 
 
+### Threads ###
+
+lighthouse_thread = threading.Thread(daemon=True)
+
+#####################################################################
+
+
 ### Defs ###
 
 def file_open():                                                                                                                                                # Function to call the Filedialog to then set the Var. for Lighthouse (DOESNT WORK FFS)
@@ -38,7 +52,7 @@ def file_open():                                                                
     if linkfile is None:
         return
     file = open(linkfile.name, mode="r")
-
+    
     links = linkfile.read()
     #text.config(state="normal")
     text.delete(0.0,END)
@@ -48,6 +62,7 @@ def file_open():                                                                
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
     global filenumber
+<<<<<<< HEAD
 
     global reportlocation
     global instantkill
@@ -76,6 +91,44 @@ def start_lighthouse():                                                         
     except NameError:
         print("Link file not found!")
 
+=======
+    global reportlocation
+    global instantkill
+    global file
+    CheckThread()
+    for url in file:
+        url = url.rstrip("\n")
+        print(url)
+        filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
+
+        if os.path.isfile(reportlocation + "/" + filename + ".html"):
+            print("EXISTS!")
+            filenumber = 2
+            while True:                                                                                                                                         # True muss durch Keepfiles ersetzt werden!
+                newfilename = filename + "{}".format(filenumber)
+                if not os.path.isfile(reportlocation + "/" + newfilename + ".html"):
+                    filename = newfilename
+                    break
+                filenumber += 1
+        if instantkill:
+            break
+        
+        
+        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))    
+        
+
+def CheckThread():
+    print(lighthouse_thread.is_alive())
+    if lighthouse_thread.is_alive() == True:
+        print("Thread is already running!")
+        
+    elif lighthouse_thread.is_alive() == False:
+        lighthouse_thread.start()
+        print("Thread has been started!")
+        
+        
+        
+>>>>>>> 54641a9d78f6f1ab85bfb75708a0b773de2ea779
 
 def CheckThread():
     if lighthouse_thread.is_alive == False:
@@ -107,6 +160,7 @@ root.config(background="gray26")
 root.title("SEO Helper")
 root.resizable(width=False, height=False)
 
+<<<<<<< HEAD
 #####################################################################
 
 
@@ -116,6 +170,8 @@ lighthouse_thread = Thread(daemon=True)
 
 #####################################################################
 
+=======
+>>>>>>> 54641a9d78f6f1ab85bfb75708a0b773de2ea779
 
 ### Frames ###
 
@@ -148,7 +204,7 @@ OpenLink.place(in_=text, x=305, y=312)
 ReportLocation = Button(root, text="Select Savelocation", command=report_location)
 ReportLocation.place(x=750, y=150)
 
-Start_Ligthouse = Button(root, text="Starten", command=lighthouse_thread.start)
+Start_Ligthouse = Button(root, text="Starten", command=start_lighthouse)
 Start_Ligthouse.place(x=850, y=312)
 
 Quit_All = Button(root, text="Beenden", command=quit_all)

@@ -21,6 +21,7 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include=".gitignore" />
     <Content Include="Links.txt" />
     <Content Include="reports\Für Test zwecke\Report_test.html" />
     <Content Include="reports\Für Test zwecke\Report_test1.html" />
