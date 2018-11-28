@@ -1,4 +1,4 @@
-#Version 0.8
+#Version 0.8.5
 
 try:
     from tkinter import *
