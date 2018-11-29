@@ -27,6 +27,9 @@ config = configparser.ConfigParser()
 CheckIn = False
 CheckOut = False
 
+        ### Design Vars ###
+
+
 #####################################################################
 
 
@@ -89,7 +92,9 @@ def start_lighthouse():                                                         
             break
         
         
-        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))    
+        #os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
+    return
+    lighthouse_thread._stop()
         
 
 def quit_all():                                                                                                                                                 # Explains itself
@@ -123,6 +128,12 @@ root.config(background="gray26")
 root.title("SEO Helper")
 root.resizable(width=False, height=False)
 
+DesingPicker = Tk()
+DesingPicker.withdraw()
+DesingPicker.geometry("200x200")
+DesingPicker.config(background="White")
+DesingPicker.resizable(width=False, height=False)
+DesingPicker.title("Design Picker")
 
 #####################################################################
 
@@ -189,7 +200,7 @@ Keepfiles_Check.grid(in_=Keepfile_Frame, row = 1, column = 1)
 config.read("config.ini")
 
 while True:
-
+    
     if config["DEFAULT"].getboolean("FirstRun") == True:
         config.set("DEFAULT", "FirstRun", "False")
         with open('config.ini', 'w') as configfile:
@@ -212,6 +223,9 @@ while True:
                     print("installed")
                     root.deiconify()
 
+                    DesingPicker.deiconify()
+                    
+
                 elif answer == False:
                     messagebox.showwarning("Warning","This tool won't work unless the Google Lighthouse Package is installed, please install it yourself!")
                     
@@ -226,10 +240,16 @@ while True:
             quit_all()
     elif config["DEFAULT"].getboolean("FirstRun") == False:
         root.deiconify()
+        DesingPicker.deiconify()
+        DesingPicker.lift()
+        DesingPicker.attributes('-topmost',True)
+        DesingPicker.attributes('-toolwindow',True)
         break
 
 
 #####################################################################
-
-
 root.mainloop()
+
+
+DesingPicker.mainloop()
+
