@@ -5,15 +5,15 @@ try:
     from tkinter import filedialog
     from tkinter import messagebox
     import configparser 
-    from multiprocessing import Process
+    import threading
     import os
 
 except:
     from Tkinter import *
     from Tkinter import filedialog
     from Tkinter import messagebox
-    import Thread
-    from multiprocessing import process
+    import threading
+    import configparser
     import os
 
 
@@ -24,26 +24,39 @@ keepfiles = 2
 filenumber = 0
 instantkill = False
 config = configparser.ConfigParser()
-CheckInOut = False
-Var1 = False
-Var2 = False
+CheckIn = False
+CheckOut = False
+
+#####################################################################
+
+
+### Threads ###
+
+lighthouse_thread = threading.Thread(daemon=True)
 
 #####################################################################
 
 
 ### Defs ###
 
+def CheckInOut():
+    if CheckIn and CheckOut == True:
+        Start_Ligthouse.config(state= NORMAL)
+
+    root.after(100, CheckInOut)
+
 def file_open():                                                                                                                                                # Function to call the Filedialog to then set the Var. for Lighthouse (DOESNT WORK FFS)
     global text
     global file
-
-    linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
+    global CheckIn
     
+    linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
     if linkfile is None:
         return
-    
+
     file = open(linkfile.name, mode="r")
-    
+    CheckIn = True
+
     links = linkfile.read()
     #text.config(state="normal")
     text.delete(0.0,END)
@@ -52,14 +65,12 @@ def file_open():                                                                
 
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
-    
     global filenumber
     global reportlocation
     global instantkill
     global file
-    global CheckInOut
 
-    
+    Start_Ligthouse.config(state=DISABLED)   
     for url in file:
         url = url.rstrip("\n")
         print(url)
@@ -78,11 +89,8 @@ def start_lighthouse():                                                         
             break
         
         
-        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
-    
+        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))    
         
-
-
 
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
@@ -92,9 +100,16 @@ def quit_all():                                                                 
 
 
 def report_location():
+    global CheckOut
     global reportlocation
     reportlocation = filedialog.askdirectory()
-    print(reportlocation)
+    
+    if len(reportlocation) > 0:
+        print(reportlocation)
+        CheckOut = True
+    else:
+        return
+    
 
 #####################################################################
 
@@ -111,14 +126,10 @@ root.resizable(width=False, height=False)
 
 #####################################################################
 
-################################################################################################################### Das hier ist neu, will nicht wie ich will
-### Processes ###
 
-def Lighthouse_process():
-    lighthouse_process = Process(target=start_lighthouse, daemon=True)
-    lighthouse_process.start()
-    
+### Threads ###
 
+lighthouse_thread = threading.Thread(target=start_lighthouse, daemon=True)
 
 #####################################################################
 
@@ -154,8 +165,10 @@ OpenLink.place(in_=text, x=305, y=312)
 ReportLocation = Button(root, text="Select Savelocation", command=report_location)
 ReportLocation.place(x=750, y=150)
 
-Start_Ligthouse = Button(root, text="Starten", command=Lighthouse_process)
+Start_Ligthouse = Button(root, text="Starten", command=lighthouse_thread.start)
 Start_Ligthouse.place(x=850, y=312)
+Start_Ligthouse.config(state=DISABLED)
+root.after(100, CheckInOut)
 
 Quit_All = Button(root, text="Beenden", command=quit_all)
 Quit_All.place(x=835, y=15)
@@ -172,9 +185,8 @@ Keepfiles_Check.grid(in_=Keepfile_Frame, row = 1, column = 1)
 
 
 ### First run check ###
-config.read("config.ini")
-print(config["DEFAULT"].getboolean("FirstRun"))
 
+config.read("config.ini")
 
 while True:
 
@@ -201,7 +213,7 @@ while True:
                     root.deiconify()
 
                 elif answer == False:
-                    messagebox.showwarning("Warning","This tool won't work unless the Google Lighthouse Pacpage is installed, please install it yourself!")
+                    messagebox.showwarning("Warning","This tool won't work unless the Google Lighthouse Package is installed, please install it yourself!")
                     
                     print("quit")
                     root.deiconify()
@@ -217,9 +229,7 @@ while True:
         break
 
 
-
 #####################################################################
 
 
 root.mainloop()
-
