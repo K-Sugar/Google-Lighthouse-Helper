@@ -5,17 +5,15 @@ try:
     from tkinter import filedialog
     from tkinter import messagebox
     import configparser 
-    import threading
-    import _thread
+    from multiprocessing import Process
     import os
 
 except:
     from Tkinter import *
     from Tkinter import filedialog
     from Tkinter import messagebox
-    import thread
-    import threading
-    import configparser
+    import Thread
+    from multiprocessing import process
     import os
 
 
@@ -26,13 +24,9 @@ keepfiles = 2
 filenumber = 0
 instantkill = False
 config = configparser.ConfigParser()
-
-#####################################################################
-
-
-### Threads ###
-
-lighthouse_thread = threading.Thread(daemon=True)
+CheckInOut = False
+Var1 = False
+Var2 = False
 
 #####################################################################
 
@@ -44,8 +38,10 @@ def file_open():                                                                
     global file
 
     linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
+    
     if linkfile is None:
         return
+    
     file = open(linkfile.name, mode="r")
     
     links = linkfile.read()
@@ -56,11 +52,14 @@ def file_open():                                                                
 
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
+    
     global filenumber
     global reportlocation
     global instantkill
     global file
-    CheckThread()
+    global CheckInOut
+
+    
     for url in file:
         url = url.rstrip("\n")
         print(url)
@@ -79,26 +78,11 @@ def start_lighthouse():                                                         
             break
         
         
-        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))    
+        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
+    
         
 
-def CheckThread():
-    print(lighthouse_thread.is_alive())
-    if lighthouse_thread.is_alive() == True:
-        print("Thread is already running!")
-        
-    elif lighthouse_thread.is_alive() == False:
-        lighthouse_thread.start()
-        print("Thread has been started!")
 
-
-
-
-def CheckThread():
-    if lighthouse_thread.is_alive == False:
-        lighthouse_thread.run()
-    elif lighthouse_thread.is_alive:
-        pass
 
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
@@ -127,10 +111,14 @@ root.resizable(width=False, height=False)
 
 #####################################################################
 
+################################################################################################################### Das hier ist neu, will nicht wie ich will
+### Processes ###
 
-### Threads ###
+def Lighthouse_process():
+    lighthouse_process = Process(target=start_lighthouse, daemon=True)
+    lighthouse_process.start()
+    
 
-lighthouse_thread = Thread(daemon=True)
 
 #####################################################################
 
@@ -166,7 +154,7 @@ OpenLink.place(in_=text, x=305, y=312)
 ReportLocation = Button(root, text="Select Savelocation", command=report_location)
 ReportLocation.place(x=750, y=150)
 
-Start_Ligthouse = Button(root, text="Starten", command=start_lighthouse)
+Start_Ligthouse = Button(root, text="Starten", command=Lighthouse_process)
 Start_Ligthouse.place(x=850, y=312)
 
 Quit_All = Button(root, text="Beenden", command=quit_all)
@@ -191,12 +179,15 @@ print(config["DEFAULT"].getboolean("FirstRun"))
 while True:
 
     if config["DEFAULT"].getboolean("FirstRun") == True:
-
+        config.set("DEFAULT", "FirstRun", "False")
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
         try:
             os.system("npm -v")
 
             try:
                 os.system("npm show lighthouse version")
+                root.deiconify()
                 break
 
 
@@ -205,10 +196,13 @@ while True:
                 answer = messagebox.askyesno("Warning!","It seems like you don't have the Google lighthouse Package installed. Should the program install it for you?")
 
                 if answer == True:
+                    os.system("npm install -g lighthouse")
                     print("installed")
                     root.deiconify()
 
                 elif answer == False:
+                    messagebox.showwarning("Warning","This tool won't work unless the Google Lighthouse Pacpage is installed, please install it yourself!")
+                    
                     print("quit")
                     root.deiconify()
                     quit_all()
@@ -218,8 +212,9 @@ while True:
         except OSError:
             messagebox.showwarning("Warning","It seems like you don't have NPM installed. Please install it and restart the Program!")
             quit_all()
-
-root.deiconify()
+    elif config["DEFAULT"].getboolean("FirstRun") == False:
+        root.deiconify()
+        break
 
 
 
@@ -227,3 +222,4 @@ root.deiconify()
 
 
 root.mainloop()
+
