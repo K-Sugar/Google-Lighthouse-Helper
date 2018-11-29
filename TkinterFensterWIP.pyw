@@ -185,19 +185,21 @@ Keepfiles_Check.grid(in_=Keepfile_Frame, row = 1, column = 1)
 
 
 ### First run check ###
-config.read("config.ini")
-print(config["DEFAULT"].getboolean("FirstRun"))
 
+config.read("config.ini")
 
 while True:
 
     if config["DEFAULT"].getboolean("FirstRun") == True:
-
+        config.set("DEFAULT", "FirstRun", "False")
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
         try:
             os.system("npm -v")
 
             try:
                 os.system("npm show lighthouse version")
+                root.deiconify()
                 break
 
 
@@ -206,10 +208,13 @@ while True:
                 answer = messagebox.askyesno("Warning!","It seems like you don't have the Google lighthouse Package installed. Should the program install it for you?")
 
                 if answer == True:
+                    os.system("npm install -g lighthouse")
                     print("installed")
                     root.deiconify()
 
                 elif answer == False:
+                    messagebox.showwarning("Warning","This tool won't work unless the Google Lighthouse Package is installed, please install it yourself!")
+                    
                     print("quit")
                     root.deiconify()
                     quit_all()
@@ -219,9 +224,9 @@ while True:
         except OSError:
             messagebox.showwarning("Warning","It seems like you don't have NPM installed. Please install it and restart the Program!")
             quit_all()
-
-root.deiconify()
-
+    elif config["DEFAULT"].getboolean("FirstRun") == False:
+        root.deiconify()
+        break
 
 
 #####################################################################
