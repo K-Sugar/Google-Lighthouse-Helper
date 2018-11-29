@@ -6,14 +6,12 @@ try:
     from tkinter import messagebox
     import configparser 
     import threading
-    import _thread
     import os
 
 except:
     from Tkinter import *
     from Tkinter import filedialog
     from Tkinter import messagebox
-    import thread
     import threading
     import configparser
     import os
@@ -26,6 +24,8 @@ keepfiles = 2
 filenumber = 0
 instantkill = False
 config = configparser.ConfigParser()
+CheckIn = False
+CheckOut = False
 
 #####################################################################
 
@@ -39,15 +39,24 @@ lighthouse_thread = threading.Thread(daemon=True)
 
 ### Defs ###
 
+def CheckInOut():
+    if CheckIn and CheckOut == True:
+        Start_Ligthouse.config(state= NORMAL)
+
+    root.after(100, CheckInOut)
+
 def file_open():                                                                                                                                                # Function to call the Filedialog to then set the Var. for Lighthouse (DOESNT WORK FFS)
     global text
     global file
-
+    global CheckIn
+    
     linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
     if linkfile is None:
         return
+
     file = open(linkfile.name, mode="r")
-    
+    CheckIn = True
+
     links = linkfile.read()
     #text.config(state="normal")
     text.delete(0.0,END)
@@ -60,7 +69,8 @@ def start_lighthouse():                                                         
     global reportlocation
     global instantkill
     global file
-    CheckThread()
+
+    Start_Ligthouse.config(state=DISABLED)   
     for url in file:
         url = url.rstrip("\n")
         print(url)
@@ -82,24 +92,6 @@ def start_lighthouse():                                                         
         os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))    
         
 
-def CheckThread():
-    print(lighthouse_thread.is_alive())
-    if lighthouse_thread.is_alive() == True:
-        print("Thread is already running!")
-        
-    elif lighthouse_thread.is_alive() == False:
-        lighthouse_thread.start()
-        print("Thread has been started!")
-
-
-
-
-def CheckThread():
-    if lighthouse_thread.is_alive == False:
-        lighthouse_thread.run()
-    elif lighthouse_thread.is_alive:
-        pass
-
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
     root.destroy()
@@ -108,9 +100,16 @@ def quit_all():                                                                 
 
 
 def report_location():
+    global CheckOut
     global reportlocation
     reportlocation = filedialog.askdirectory()
-    print(reportlocation)
+    
+    if len(reportlocation) > 0:
+        print(reportlocation)
+        CheckOut = True
+    else:
+        return
+    
 
 #####################################################################
 
@@ -130,7 +129,7 @@ root.resizable(width=False, height=False)
 
 ### Threads ###
 
-lighthouse_thread = Thread(daemon=True)
+lighthouse_thread = threading.Thread(target=start_lighthouse, daemon=True)
 
 #####################################################################
 
@@ -166,8 +165,10 @@ OpenLink.place(in_=text, x=305, y=312)
 ReportLocation = Button(root, text="Select Savelocation", command=report_location)
 ReportLocation.place(x=750, y=150)
 
-Start_Ligthouse = Button(root, text="Starten", command=start_lighthouse)
+Start_Ligthouse = Button(root, text="Starten", command=lighthouse_thread.start)
 Start_Ligthouse.place(x=850, y=312)
+Start_Ligthouse.config(state=DISABLED)
+root.after(100, CheckInOut)
 
 Quit_All = Button(root, text="Beenden", command=quit_all)
 Quit_All.place(x=835, y=15)
