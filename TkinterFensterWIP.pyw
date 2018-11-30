@@ -6,6 +6,7 @@ try:
     from tkinter import messagebox
     import configparser 
     import threading
+    from multiprocessing import Process
     import os
 
 except:
@@ -43,28 +44,62 @@ lighthouse_thread = threading.Thread(daemon=True)
 ### Defs ###
 
 def CheckInOut():
+    global CheckIn
+    global CheckOut
+
     if CheckIn and CheckOut == True:
         Start_Ligthouse.config(state= NORMAL)
+        
+
+    if CheckIn and CheckOut == False:
+        Start_Ligthouse.config(state= DISABLED)
+        
 
     root.after(100, CheckInOut)
+    
+def InputCheck():
+    global CheckIn
+    global text
+    global file
+    global textEdit
+
+    textEdit = text.edit_modified()
+
+    if textEdit == 1:
+        CheckIn = True
+        
+    elif textEdit == 0:
+        CheckIn = False
+    root.after(100, InputCheck)
+    
+
 
 def file_open():                                                                                                                                                # Function to call the Filedialog to then set the Var. for Lighthouse (DOESNT WORK FFS)
     global text
     global file
     global CheckIn
+    global textEdit
     
     linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
-    if linkfile is None:
+    if linkfile is None and textEdit == 0:
+        print("1")
         return
+    
+    elif linkfile is not None:
+        print("2")
+        file = open(linkfile.name, mode="r")
+        CheckIn = True
 
-    file = open(linkfile.name, mode="r")
-    CheckIn = True
+    elif textEdit == 1:
+        print("3")
+        file = text
+    
+
 
     links = linkfile.read()
-    #text.config(state="normal")
     text.delete(0.0,END)
     text.insert(END,links)
-    #text.config(state="disable")
+   
 
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
@@ -72,8 +107,10 @@ def start_lighthouse():                                                         
     global reportlocation
     global instantkill
     global file
+    global CheckIn
+    global CheckOut
 
-    Start_Ligthouse.config(state=DISABLED)   
+    Start_Ligthouse.config(state= DISABLED)   
     for url in file:
         url = url.rstrip("\n")
         print(url)
@@ -93,8 +130,15 @@ def start_lighthouse():                                                         
         
         
         #os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
-    return
-    lighthouse_thread._stop()
+    text.edit_modified(False)
+    CheckIn = False
+    CheckOut = False
+    print("LoopEnded")
+    print("| CheckIn: {} | CheckOut: {} | Text.Modified: {} |".format(CheckIn,CheckOut,text.edit_modified()))
+    CheckInOut()
+
+    
+    
         
 
 def quit_all():                                                                                                                                                 # Explains itself
@@ -115,7 +159,10 @@ def report_location():
     else:
         return
     
-
+def create_thread():
+    print("Thread Created")
+    lighthouse_thread = threading.Thread(target=start_lighthouse)
+    lighthouse_thread.start()
 #####################################################################
 
 
@@ -127,6 +174,8 @@ root.geometry("900x340")
 root.config(background="gray26")
 root.title("SEO Helper")
 root.resizable(width=False, height=False)
+root.after(100, InputCheck)
+
 
 DesingPicker = Tk()
 DesingPicker.withdraw()
@@ -140,7 +189,8 @@ DesingPicker.title("Design Picker")
 
 ### Threads ###
 
-lighthouse_thread = threading.Thread(target=start_lighthouse, daemon=True)
+
+
 
 #####################################################################
 
@@ -164,6 +214,7 @@ Keepfile_Frame.grid(in_=settings, row = 1, column = 1)
 text=Text(root)
 text.config(wrap="none", width=50, height=21, background="gray64", foreground="black")
 text.grid(row=1, column=1)
+root.after(100, InputCheck)
 
 #####################################################################
 
@@ -176,7 +227,7 @@ OpenLink.place(in_=text, x=305, y=312)
 ReportLocation = Button(root, text="Select Savelocation", command=report_location)
 ReportLocation.place(x=750, y=150)
 
-Start_Ligthouse = Button(root, text="Starten", command=lighthouse_thread.start)
+Start_Ligthouse = Button(root, text="Starten", command=create_thread)
 Start_Ligthouse.place(x=850, y=312)
 Start_Ligthouse.config(state=DISABLED)
 root.after(100, CheckInOut)
@@ -253,3 +304,5 @@ root.mainloop()
 
 DesingPicker.mainloop()
 
+if __name__ == "__Main":
+    lighthouse_process = Process(target=start_lighthouse, daemon=True)
