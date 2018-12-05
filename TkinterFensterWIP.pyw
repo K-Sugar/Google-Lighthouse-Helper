@@ -27,6 +27,8 @@ instantkill = False
 config = configparser.ConfigParser()
 CheckIn = False
 CheckOut = False
+config.read("config.ini")
+
 
         ### Design Vars ###
 
@@ -51,26 +53,36 @@ def CheckInOut():
         Start_Ligthouse.config(state= NORMAL)
         
 
-    if CheckIn and CheckOut == False:
+    elif CheckIn and CheckOut == False:
         Start_Ligthouse.config(state= DISABLED)
         
 
     root.after(100, CheckInOut)
     
-def InputCheck():
-    global CheckIn
-    global text
-    global file
-    global textEdit
+#def InputCheck():
+#    global CheckIn
+#    global text
+#    global file
+#    global textEdit
+#
+#    textEdit = text.edit_modified()
+#
+#    if textEdit == 1:
+#        CheckIn = True
+#        
+#    elif textEdit == 0:
+#        CheckIn = False
+#    root.after(100, InputCheck)
 
-    textEdit = text.edit_modified()
-
-    if textEdit == 1:
-        CheckIn = True
+def remember_location():
+    if RememberLocationVar.get() == 1:
+        config.set("LIGHTHOUSE", "output_path", "{}".format(reportlocation))
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
+        print("Output path was saved")
+    elif RememberLocationVar.get() == 0:
         
-    elif textEdit == 0:
-        CheckIn = False
-    root.after(100, InputCheck)
+        root.after(100,remember_location)
     
 
 
@@ -81,8 +93,9 @@ def file_open():                                                                
     global textEdit
     
     linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
-    if linkfile is None and textEdit == 0:
+    if linkfile is None: # and textEdit == 0:
         print("1")
+        CheckIn = False
         return
     
     elif linkfile is not None:
@@ -90,9 +103,7 @@ def file_open():                                                                
         file = open(linkfile.name, mode="r")
         CheckIn = True
 
-    elif textEdit == 1:
-        print("3")
-        file = text
+    
     
 
 
@@ -109,6 +120,8 @@ def start_lighthouse():                                                         
     global file
     global CheckIn
     global CheckOut
+    global text
+
 
     Start_Ligthouse.config(state= DISABLED)   
     for url in file:
@@ -130,6 +143,7 @@ def start_lighthouse():                                                         
         
         
         #os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
+    Start_Ligthouse.config(state=DISABLED)
     text.edit_modified(False)
     CheckIn = False
     CheckOut = False
@@ -155,6 +169,8 @@ def report_location():
     
     if len(reportlocation) > 0:
         print(reportlocation)
+        Remember_Location.config(state=NORMAL)
+        root.after(100,remember_location)
         CheckOut = True
     else:
         return
@@ -174,7 +190,7 @@ root.geometry("900x340")
 root.config(background="gray26")
 root.title("SEO Helper")
 root.resizable(width=False, height=False)
-root.after(100, InputCheck)
+
 
 
 DesingPicker = Tk()
@@ -214,7 +230,7 @@ Keepfile_Frame.grid(in_=settings, row = 1, column = 1)
 text=Text(root)
 text.config(wrap="none", width=50, height=21, background="gray64", foreground="black")
 text.grid(row=1, column=1)
-root.after(100, InputCheck)
+#root.after(100, InputCheck)
 
 #####################################################################
 
@@ -237,18 +253,28 @@ Quit_All.place(x=835, y=15)
 
 #####################################################################
 
+### Google Lighthouse Vars ###
+
+Keepfilesvar = IntVar()
+RememberLocationVar = IntVar()
+
+#####################################################################
 
 ### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
 
-Keepfiles_Check = Checkbutton(settings, text="Keep duplicate files")
+Keepfiles_Check = Checkbutton(settings, text="Keep duplicate files", variable=Keepfilesvar)
 Keepfiles_Check.grid(in_=Keepfile_Frame, row = 1, column = 1)
+
+Remember_Location = Checkbutton(root, text="Remember Location?", variable=RememberLocationVar)
+Remember_Location.place(x=750, y=180)
+Remember_Location.config(state=DISABLED)
 
 #####################################################################
 
 
 ### First run check ###
 
-config.read("config.ini")
+
 
 while True:
     
