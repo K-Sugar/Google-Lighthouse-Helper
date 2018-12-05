@@ -2,9 +2,10 @@
 
 try:
     from tkinter import *
+    from tkinter.ttk import *
     from tkinter import filedialog
     from tkinter import messagebox
-    import configparser 
+    import configparser
     import threading
     from multiprocessing import Process
     import os
@@ -28,9 +29,9 @@ config = configparser.ConfigParser()
 CheckIn = False
 CheckOut = False
 config.read("config.ini")
+OldCheck = 2
 
-
-        ### Design Vars ###
+### Design Vars ###
 
 
 #####################################################################
@@ -51,14 +52,14 @@ def CheckInOut():
 
     if CheckIn and CheckOut == True:
         Start_Ligthouse.config(state= NORMAL)
-        
+
 
     elif CheckIn and CheckOut == False:
         Start_Ligthouse.config(state= DISABLED)
-        
+
 
     root.after(100, CheckInOut)
-    
+
 #def InputCheck():
 #    global CheckIn
 #    global text
@@ -69,21 +70,33 @@ def CheckInOut():
 #
 #    if textEdit == 1:
 #        CheckIn = True
-#        
+#
 #    elif textEdit == 0:
 #        CheckIn = False
 #    root.after(100, InputCheck)
 
 def remember_location():
-    if RememberLocationVar.get() == 1:
-        config.set("LIGHTHOUSE", "output_path", "{}".format(reportlocation))
-        with open('config.ini', 'w') as configfile:
-            config.write(configfile)
-        print("Output path was saved")
-    elif RememberLocationVar.get() == 0:
-        
-        root.after(100,remember_location)
-    
+    global OldCheck
+
+    if OldCheck != RememberLocationVar.get():
+        if RememberLocationVar.get() == 1:
+            config.set("LIGHTHOUSE", "output_path", "{}".format(reportlocation))
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+
+            print(" Output was set ")
+            OldCheck = 1
+
+        elif RememberLocationVar.get() == 0:
+            config.set("LIGHTHOUSE", "output_path", "{}".format(""))
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+
+            print(" Output was emptied ")
+            OldCheck = 0
+
+    root.after(100,remember_location)
+
 
 
 def file_open():                                                                                                                                                # Function to call the Filedialog to then set the Var. for Lighthouse (DOESNT WORK FFS)
@@ -91,26 +104,27 @@ def file_open():                                                                
     global file
     global CheckIn
     global textEdit
-    
+
     linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
     if linkfile is None: # and textEdit == 0:
         print("1")
         CheckIn = False
         return
-    
+
     elif linkfile is not None:
         print("2")
         file = open(linkfile.name, mode="r")
         CheckIn = True
 
-    
-    
 
+
+    num_lines = sum(1 for line in file)
+    print(num_lines)
 
     links = linkfile.read()
     text.delete(0.0,END)
     text.insert(END,links)
-   
+
 
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
@@ -123,7 +137,7 @@ def start_lighthouse():                                                         
     global text
 
 
-    Start_Ligthouse.config(state= DISABLED)   
+    Start_Ligthouse.config(state= DISABLED)
     for url in file:
         url = url.rstrip("\n")
         print(url)
@@ -140,8 +154,8 @@ def start_lighthouse():                                                         
                 filenumber += 1
         if instantkill:
             break
-        
-        
+
+
         #os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
     Start_Ligthouse.config(state=DISABLED)
     text.edit_modified(False)
@@ -151,9 +165,9 @@ def start_lighthouse():                                                         
     print("| CheckIn: {} | CheckOut: {} | Text.Modified: {} |".format(CheckIn,CheckOut,text.edit_modified()))
     CheckInOut()
 
-    
-    
-        
+
+
+
 
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
@@ -166,7 +180,7 @@ def report_location():
     global CheckOut
     global reportlocation
     reportlocation = filedialog.askdirectory()
-    
+
     if len(reportlocation) > 0:
         print(reportlocation)
         Remember_Location.config(state=NORMAL)
@@ -174,7 +188,7 @@ def report_location():
         CheckOut = True
     else:
         return
-    
+
 def create_thread():
     print("Thread Created")
     lighthouse_thread = threading.Thread(target=start_lighthouse)
@@ -277,7 +291,7 @@ Remember_Location.config(state=DISABLED)
 
 
 while True:
-    
+
     if config["DEFAULT"].getboolean("FirstRun") == True:
         config.set("DEFAULT", "FirstRun", "False")
         with open('config.ini', 'w') as configfile:
@@ -301,11 +315,11 @@ while True:
                     root.deiconify()
 
                     DesingPicker.deiconify()
-                    
+
 
                 elif answer == False:
                     messagebox.showwarning("Warning","This tool won't work unless the Google Lighthouse Package is installed, please install it yourself!")
-                    
+
                     print("quit")
                     root.deiconify()
                     quit_all()
