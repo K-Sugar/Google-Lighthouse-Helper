@@ -2,6 +2,7 @@
 
 try:
     from tkinter import *
+    from tkinter import ttk
     from tkinter.ttk import *
     from tkinter import filedialog
     from tkinter import messagebox
@@ -172,6 +173,7 @@ def start_lighthouse():                                                         
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
     root.destroy()
+    DesingPicker.destroy()
     instantkill = True
     SystemExit(0)
 
@@ -201,7 +203,7 @@ def create_thread():
 root = Tk()
 root.withdraw()
 root.geometry("900x340")
-root.config(background="gray26")
+root.config(background="snow")
 root.title("SEO Helper")
 root.resizable(width=False, height=False)
 
@@ -210,7 +212,7 @@ root.resizable(width=False, height=False)
 DesingPicker = Tk()
 DesingPicker.withdraw()
 DesingPicker.geometry("200x200")
-DesingPicker.config(background="White")
+DesingPicker.config(background="gold")
 DesingPicker.resizable(width=False, height=False)
 DesingPicker.title("Design Picker")
 
@@ -224,6 +226,7 @@ DesingPicker.title("Design Picker")
 
 #####################################################################
 
+style = ttk.Style(root)
 
 ### Frames ###
 
@@ -232,9 +235,10 @@ settings.config(width=495, height=340)
 settings.grid(row=1, column=2)
 settings.grid_propagate(False)
 
-Keepfile_Frame=LabelFrame(settings, text="Keep files if Duplicate?")
+Keepfile_Frame=ttk.LabelFrame(settings, text="Keep files if Duplicate?")
 Keepfile_Frame.config(width=150, height=200)
 Keepfile_Frame.grid(in_=settings, row = 1, column = 1)
+style.configure(Keepfile_Frame, bg="gold", foreground="gold")
 
 #####################################################################
 
