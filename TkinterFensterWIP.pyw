@@ -30,7 +30,10 @@ config = configparser.ConfigParser()
 CheckIn = False
 CheckOut = False
 config.read("config.ini")
+has_started = False
 OldCheck = 2
+ProgressVar = 0
+num_lines = 0
 
 ### Design Vars ###
 
@@ -56,8 +59,10 @@ def CheckInOut():
 
 
     elif CheckIn and CheckOut == False:
-        Start_Ligthouse.config(state= DISABLED)
-
+        if has_started == False:
+            Start_Ligthouse.config(state= DISABLED)
+        else:
+            pass
 
     root.after(100, CheckInOut)
 
@@ -78,9 +83,13 @@ def CheckInOut():
 
 def remember_location():
     global OldCheck
+    global config
 
-    if OldCheck != RememberLocationVar.get():
+
+    if OldCheck != RememberLocationVar.get() or config["LIGHTHOUSE"]["output_path"]  != reportlocation:
+
         if RememberLocationVar.get() == 1:
+
             config.set("LIGHTHOUSE", "output_path", "{}".format(reportlocation))
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
@@ -88,13 +97,15 @@ def remember_location():
             print(" Output was set ")
             OldCheck = 1
 
-        elif RememberLocationVar.get() == 0:
+
+        elif OldCheck == 1 and RememberLocationVar.get() == 0:
             config.set("LIGHTHOUSE", "output_path", "{}".format(""))
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
 
             print(" Output was emptied ")
             OldCheck = 0
+
 
     root.after(100,remember_location)
 
@@ -105,6 +116,8 @@ def file_open():                                                                
     global file
     global CheckIn
     global textEdit
+    global linkfile
+    global num_lines
 
     linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
     if linkfile is None: # and textEdit == 0:
@@ -115,11 +128,14 @@ def file_open():                                                                
     elif linkfile is not None:
         print("2")
         file = open(linkfile.name, mode="r")
+        num_lines = sum(1 for line in file)
+        file = open(linkfile.name, mode="r")
+
         CheckIn = True
 
 
 
-    num_lines = sum(1 for line in file)
+
     print(num_lines)
 
     links = linkfile.read()
@@ -130,24 +146,31 @@ def file_open():                                                                
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
     global filenumber
+    global linkfile
     global reportlocation
     global instantkill
     global file
     global CheckIn
     global CheckOut
     global text
-
+    global progress
 
     Start_Ligthouse.config(state= DISABLED)
     for url in file:
+
+
+        progress.step(1.0)
+
         url = url.rstrip("\n")
         print(url)
+        import time
+        time.sleep(0.1)
         filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
 
         if os.path.isfile(reportlocation + "/" + filename + ".html"):
             print("EXISTS!")
             filenumber = 2
-            while True:                                                                                                                                         # True muss durch Keepfiles ersetzt werden!
+            while Keepfilesvar == 1:                                                                                                                                         # True muss durch Keepfiles ersetzt werden!
                 newfilename = filename + "{}".format(filenumber)
                 if not os.path.isfile(reportlocation + "/" + newfilename + ".html"):
                     filename = newfilename
@@ -158,10 +181,9 @@ def start_lighthouse():                                                         
 
 
         #os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
-    Start_Ligthouse.config(state=DISABLED)
+    has_started = True
+    file = open(linkfile.name, mode="r")
     text.edit_modified(False)
-    CheckIn = False
-    CheckOut = False
     print("LoopEnded")
     print("| CheckIn: {} | CheckOut: {} | Text.Modified: {} |".format(CheckIn,CheckOut,text.edit_modified()))
     CheckInOut()
@@ -172,8 +194,8 @@ def start_lighthouse():                                                         
 
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
-    root.destroy()
-    DesingPicker.destroy()
+    root.destroy() #and DesingPicker.destroy()
+
     instantkill = True
     SystemExit(0)
 
@@ -209,12 +231,12 @@ root.resizable(width=False, height=False)
 
 
 
-DesingPicker = Tk()
-DesingPicker.withdraw()
-DesingPicker.geometry("200x200")
-DesingPicker.config(background="gold")
-DesingPicker.resizable(width=False, height=False)
-DesingPicker.title("Design Picker")
+#DesingPicker = Tk()
+#DesingPicker.withdraw()
+#DesingPicker.geometry("200x200")
+#DesingPicker.config(background="gold")
+#DesingPicker.resizable(width=False, height=False)
+#DesingPicker.title("Design Picker")
 
 #####################################################################
 
@@ -250,7 +272,18 @@ text.config(wrap="none", width=50, height=21, background="gray64", foreground="b
 text.grid(row=1, column=1)
 #root.after(100, InputCheck)
 
+progress= Progressbar(root)
+progress.config(orient="horizontal", length=304, mode="determinate")
+progress.place(x=2, y=316)
+progress["maximum"] = num_lines
+
+
+
 #####################################################################
+
+
+
+
 
 
 ###Buttons###
@@ -271,12 +304,20 @@ Quit_All.place(x=835, y=15)
 
 #####################################################################
 
+
+
+
+
 ### Google Lighthouse Vars ###
 
 Keepfilesvar = IntVar()
 RememberLocationVar = IntVar()
 
 #####################################################################
+
+
+
+
 
 ### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
 
@@ -287,7 +328,28 @@ Remember_Location = Checkbutton(root, text="Remember Location?", variable=Rememb
 Remember_Location.place(x=750, y=180)
 Remember_Location.config(state=DISABLED)
 
+
+
+
+
 #####################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ### First run check ###
@@ -335,18 +397,23 @@ while True:
             quit_all()
     elif config["DEFAULT"].getboolean("FirstRun") == False:
         root.deiconify()
-        DesingPicker.deiconify()
-        DesingPicker.lift()
-        DesingPicker.attributes('-topmost',True)
-        DesingPicker.attributes('-toolwindow',True)
+        #DesingPicker.deiconify()
+        #DesingPicker.lift()
+        #DesingPicker.attributes('-topmost',True)
+        #DesingPicker.attributes('-toolwindow',True)
         break
+
+# Check for saved Path #
+if config["LIGHTHOUSE"]["output_path"] != None:
+    RememberLocationVar.set(1)
+    reportlocation = config["LIGHTHOUSE"]["output_path"]
+    print("reportlocation was set to saved path")
+    CheckOut = True
+    Remember_Location.config(state=NORMAL)
 
 
 #####################################################################
 root.mainloop()
 
 
-DesingPicker.mainloop()
-
-if __name__ == "__Main":
-    lighthouse_process = Process(target=start_lighthouse, daemon=True)
+#DesingPicker.mainloop()

@@ -1,4 +1,4 @@
-# Version 1.0 (Writen with Python 3.7) // 
+# Version 1.0 (Writen with Python 3.7) //
 
 import os
 import time
@@ -23,6 +23,7 @@ elif sys.platform == "Darwin":
 try:                                                                                                                            # Versuchen die Link.txt zu oeffnen, falls nicht gefunden werden kann wird Fehler geworfen und beendet.
     file = open("Links.txt", mode="r")
     num_lines = sum(1 for line in open('Links.txt'))
+    print(num_lines)
 except FileNotFoundError:
     print("Kann 'Links.txt' nicht in " + str(os.getcwd()) + " finden. Bitte stelle sicher das sie existiert!")
     raise SystemExit(0)
@@ -53,7 +54,7 @@ replacedfiles = 0
 
 
 
-os.system(clear)
+
 print("Reports werden in " + "'" +path + "'" + " gespeichert")
 print("OS = " + FindOS)
 print("Falls URLs in der Links.txt mehrmals vorkommen, sollen die Dateien ersetzt werden?")
