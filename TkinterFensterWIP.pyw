@@ -53,6 +53,11 @@ lighthouse_thread = threading.Thread(daemon=True)
 def CheckInOut():
     global CheckIn
     global CheckOut
+    global ProgressVar
+    global Progressbar
+
+    Progressbar.config(value=ProgressVar)
+    Progressbar.update()
 
     if CheckIn and CheckOut == True:
         Start_Ligthouse.config(state= NORMAL)
@@ -99,7 +104,7 @@ def remember_location():
 
 
         elif OldCheck == 1 and RememberLocationVar.get() == 0:
-            config.set("LIGHTHOUSE", "output_path", "{}".format(""))
+            config.set("LIGHTHOUSE", "output_path", "{}".format("no path"))
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
 
@@ -127,6 +132,7 @@ def file_open():                                                                
 
     elif linkfile is not None:
         print("2")
+        print(linkfile.name)
         file = open(linkfile.name, mode="r")
         num_lines = sum(1 for line in file)
         file = open(linkfile.name, mode="r")
@@ -154,13 +160,13 @@ def start_lighthouse():                                                         
     global CheckOut
     global text
     global progress
+    global ProgressVar
 
     Start_Ligthouse.config(state= DISABLED)
     for url in file:
 
 
-        progress.step(1.0)
-
+        ProgressVar += 1
         url = url.rstrip("\n")
         print(url)
         import time
@@ -183,9 +189,6 @@ def start_lighthouse():                                                         
         #os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
     has_started = True
     file = open(linkfile.name, mode="r")
-    text.edit_modified(False)
-    print("LoopEnded")
-    print("| CheckIn: {} | CheckOut: {} | Text.Modified: {} |".format(CheckIn,CheckOut,text.edit_modified()))
     CheckInOut()
 
 
@@ -194,8 +197,8 @@ def start_lighthouse():                                                         
 
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
-    root.destroy() #and DesingPicker.destroy()
 
+    root.destroy() #and DesingPicker.destroy()
     instantkill = True
     SystemExit(0)
 
@@ -248,7 +251,7 @@ root.resizable(width=False, height=False)
 
 #####################################################################
 
-style = ttk.Style(root)
+style = ttk.Style()
 
 ### Frames ###
 
@@ -256,11 +259,12 @@ settings=LabelFrame(root, text="Einstellungen")
 settings.config(width=495, height=340)
 settings.grid(row=1, column=2)
 settings.grid_propagate(False)
+style.configure(settings, bg="gold", foreground="gold")
 
 Keepfile_Frame=ttk.LabelFrame(settings, text="Keep files if Duplicate?")
 Keepfile_Frame.config(width=150, height=200)
 Keepfile_Frame.grid(in_=settings, row = 1, column = 1)
-style.configure(Keepfile_Frame, bg="gold", foreground="gold")
+
 
 #####################################################################
 
@@ -273,9 +277,9 @@ text.grid(row=1, column=1)
 #root.after(100, InputCheck)
 
 progress= Progressbar(root)
-progress.config(orient="horizontal", length=304, mode="determinate")
+progress.config(orient="horizontal", length=304, mode="determinate", maximum=num_lines+1)
 progress.place(x=2, y=316)
-progress["maximum"] = num_lines
+
 
 
 
@@ -404,12 +408,19 @@ while True:
         break
 
 # Check for saved Path #
-if config["LIGHTHOUSE"]["output_path"] != None:
+if config["LIGHTHOUSE"]["output_path"] != "no path":
     RememberLocationVar.set(1)
+    OldCheck = 1
     reportlocation = config["LIGHTHOUSE"]["output_path"]
     print("reportlocation was set to saved path")
     CheckOut = True
     Remember_Location.config(state=NORMAL)
+else:
+    RememberLocationVar.set(0)
+    OldCheck = 0
+    print("No saved report location was found")
+    CheckOut = False
+    Remember_Location.config(state=DISABLED)
 
 
 #####################################################################
