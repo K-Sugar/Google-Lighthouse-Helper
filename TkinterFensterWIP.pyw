@@ -32,7 +32,6 @@ CheckOut = False
 config.read("config.ini")
 has_started = False
 OldCheck = 2
-ProgressVar = 0
 num_lines = 0
 
 ### Design Vars ###
@@ -50,14 +49,11 @@ lighthouse_thread = threading.Thread(daemon=True)
 
 ### Defs ###
 
+
+
 def CheckInOut():
     global CheckIn
     global CheckOut
-    global ProgressVar
-    global Progressbar
-
-    Progressbar.config(value=ProgressVar)
-    Progressbar.update()
 
     if CheckIn and CheckOut == True:
         Start_Ligthouse.config(state= NORMAL)
@@ -159,14 +155,10 @@ def start_lighthouse():                                                         
     global CheckIn
     global CheckOut
     global text
-    global progress
-    global ProgressVar
 
     Start_Ligthouse.config(state= DISABLED)
     for url in file:
 
-
-        ProgressVar += 1
         url = url.rstrip("\n")
         print(url)
         import time
@@ -186,7 +178,7 @@ def start_lighthouse():                                                         
             break
 
 
-        #os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
+        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
     has_started = True
     file = open(linkfile.name, mode="r")
     CheckInOut()
@@ -230,8 +222,8 @@ root.withdraw()
 root.geometry("900x340")
 root.config(background="snow")
 root.title("SEO Helper")
-root.resizable(width=False, height=False)
-
+#root.resizable(width=False, height=False)
+root.grid_propagate(False)
 
 
 #DesingPicker = Tk()
@@ -255,15 +247,31 @@ style = ttk.Style()
 
 ### Frames ###
 
-settings=LabelFrame(root, text="Einstellungen")
-settings.config(width=495, height=340)
-settings.grid(row=1, column=2)
-settings.grid_propagate(False)
-style.configure(settings, bg="gold", foreground="gold")
 
-Keepfile_Frame=ttk.LabelFrame(settings, text="Keep files if Duplicate?")
-Keepfile_Frame.config(width=150, height=200)
-Keepfile_Frame.grid(in_=settings, row = 1, column = 1)
+
+entry_frame=Frame(root)
+entry_frame.config(width=415, height=340)
+entry_frame.grid(in_=root, row=1, column=1)
+entry_frame.grid_propagate(False)
+
+settings=Frame(root)
+settings.config(width=355, height=340)
+settings.grid(in_=root, row=1, column=2)
+settings.grid_propagate(False)
+
+right_frame=Frame(root)
+right_frame.config(width=130, height=340)
+right_frame.grid(in_=root, row=1, column=3)
+right_frame.grid_propagate(False)
+
+lighthouse_frame=LabelFrame(settings, text="Google Lighthouse Settings")
+lighthouse_frame.config(width=350, height=260)
+lighthouse_frame.grid(in_=settings, row = 1, column = 1)
+
+file_options_frame=ttk.LabelFrame(settings, text="File Options")
+file_options_frame.config(width=250, height=200)
+file_options_frame.grid(in_=settings, row = 2, column = 1)
+file_options_frame.grid_propagate(False)
 
 
 #####################################################################
@@ -273,14 +281,15 @@ Keepfile_Frame.grid(in_=settings, row = 1, column = 1)
 
 text=Text(root)
 text.config(wrap="none", width=50, height=21, background="gray64", foreground="black")
-text.grid(row=1, column=1)
+text.place(in_=entry_frame)
 #root.after(100, InputCheck)
 
-progress= Progressbar(root)
-progress.config(orient="horizontal", length=304, mode="determinate", maximum=num_lines+1)
-progress.place(x=2, y=316)
+status=Text(right_frame)
+status.config(wrap="word", width=15, height=13, background="gray64", foreground="black")
+status.grid(in_=right_frame, row = 3, column = 1)
 
-
+status_text=Label(right_frame, text="Status", foreground="black")
+status_text.grid(in_=right_frame, row=2, column=1)
 
 
 #####################################################################
@@ -295,29 +304,30 @@ progress.place(x=2, y=316)
 OpenLink = Button(text, text="Linkdatei öffnen", command=file_open)
 OpenLink.place(in_=text, x=305, y=312)
 
-ReportLocation = Button(root, text="Select Savelocation", command=report_location)
-ReportLocation.place(x=750, y=150)
+ReportLocation = Button(file_options_frame, text="Select Savelocation", command=report_location)
+ReportLocation.grid(in_=file_options_frame, row = 1, column = 1)
 
-Start_Ligthouse = Button(root, text="Starten", command=create_thread)
-Start_Ligthouse.place(x=850, y=312)
+Start_Ligthouse = Button(right_frame, text="Starten", command=create_thread, width = 19)
+Start_Ligthouse.grid(in_=right_frame, row = 4, column = 1, pady=30)
 Start_Ligthouse.config(state=DISABLED)
 root.after(100, CheckInOut)
 
-Quit_All = Button(root, text="Beenden", command=quit_all)
-Quit_All.place(x=835, y=15)
+Quit_All = Button(right_frame, text="Beenden", command=quit_all)
+Quit_All.grid(in_=right_frame, row = 1, column = 1, pady=10)
 
 #####################################################################
-
-
-
 
 
 ### Google Lighthouse Vars ###
 
 Keepfilesvar = IntVar()
 RememberLocationVar = IntVar()
+device_emulation = IntVar()
 
 #####################################################################
+
+def LighthouseSettings():
+    global DeviceEmulationVar
 
 
 
@@ -326,13 +336,13 @@ RememberLocationVar = IntVar()
 ### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
 
 Keepfiles_Check = Checkbutton(settings, text="Keep duplicate files", variable=Keepfilesvar)
-Keepfiles_Check.grid(in_=Keepfile_Frame, row = 1, column = 1)
+Keepfiles_Check.grid(in_=file_options_frame, row = 1, column = 2)
 
-Remember_Location = Checkbutton(root, text="Remember Location?", variable=RememberLocationVar)
-Remember_Location.place(x=750, y=180)
+Remember_Location = Checkbutton(settings, text="Remember Location?", variable=RememberLocationVar)
+Remember_Location.grid(in_=file_options_frame, row = 2, column = 1)
 Remember_Location.config(state=DISABLED)
 
-
+Device_Emulation = Checkbutton()
 
 
 
