@@ -54,18 +54,18 @@ lighthouse_thread = threading.Thread(daemon=True)
 def CheckInOut():
     global CheckIn
     global CheckOut
+    if lighthouse_thread.is_alive() == False:
+        if CheckIn and CheckOut == True:
+            Start_Ligthouse.config(state= NORMAL)
 
-    if CheckIn and CheckOut == True:
-        Start_Ligthouse.config(state= NORMAL)
 
+        elif CheckIn and CheckOut == False:
+            if has_started == False:
+                Start_Ligthouse.config(state= DISABLED)
+            else:
+                pass
 
-    elif CheckIn and CheckOut == False:
-        if has_started == False:
-            Start_Ligthouse.config(state= DISABLED)
-        else:
-            pass
-
-    root.after(100, CheckInOut)
+        root.after(100, CheckInOut)
 
 #def InputCheck():
 #    global CheckIn
@@ -87,7 +87,7 @@ def remember_location():
     global config
 
 
-    if OldCheck != RememberLocationVar.get() or config["LIGHTHOUSE"]["output_path"]  != reportlocation:
+    if OldCheck != RememberLocationVar.get(): #or config["LIGHTHOUSE"]["output_path"]  != reportlocation:
 
         if RememberLocationVar.get() == 1:
 
@@ -148,6 +148,7 @@ def file_open():                                                                
 
 def start_lighthouse():                                                                                                                                         # Function to send google lighthouse command to cmd (works but doesnt get the right input)
     global filenumber
+    global Keepfilesvar
     global linkfile
     global reportlocation
     global instantkill
@@ -155,12 +156,19 @@ def start_lighthouse():                                                         
     global CheckIn
     global CheckOut
     global text
-
+    Quit_All.config(state= NORMAL)
+    instantkill = False
     Start_Ligthouse.config(state= DISABLED)
     for url in file:
 
+        if instantkill == True:
+            file = open(linkfile.name, mode="r")
+            CheckInOut()
+            break
+
+        insert_status(url)
+
         url = url.rstrip("\n")
-        print(url)
         import time
         time.sleep(0.1)
         filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
@@ -168,32 +176,33 @@ def start_lighthouse():                                                         
         if os.path.isfile(reportlocation + "/" + filename + ".html"):
             print("EXISTS!")
             filenumber = 2
-            while Keepfilesvar == 1:                                                                                                                                         # True muss durch Keepfiles ersetzt werden!
+            while Keepfilesvar.get() == 1:
                 newfilename = filename + "{}".format(filenumber)
                 if not os.path.isfile(reportlocation + "/" + newfilename + ".html"):
                     filename = newfilename
                     break
                 filenumber += 1
-        if instantkill:
-            break
+
 
 
         os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
+
+
     has_started = True
     file = open(linkfile.name, mode="r")
     CheckInOut()
+    if instantkill == True:
+        insert_status("You can now safely exit the tool!")
 
+    Quit_All.config(state= DISABLED)
 
 
 
 
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
-
-    root.destroy() #and DesingPicker.destroy()
     instantkill = True
-    SystemExit(0)
-
+    insert_status("Stopping, please don't quit yet!\n")
 
 def report_location():
     global CheckOut
@@ -212,6 +221,12 @@ def create_thread():
     print("Thread Created")
     lighthouse_thread = threading.Thread(target=start_lighthouse)
     lighthouse_thread.start()
+
+
+def insert_status(message):
+    status.config(state=NORMAL)
+    status.insert(END, message)
+    status.config(state=DISABLED)
 #####################################################################
 
 
@@ -219,31 +234,15 @@ def create_thread():
 
 root = Tk()
 root.withdraw()
-root.geometry("900x340")
-root.config(background="snow")
+root.geometry("990x340")
+root.config(background="white")
 root.title("SEO Helper")
-#root.resizable(width=False, height=False)
+root.resizable(width=False, height=False)
 root.grid_propagate(False)
 
 
-#DesingPicker = Tk()
-#DesingPicker.withdraw()
-#DesingPicker.geometry("200x200")
-#DesingPicker.config(background="gold")
-#DesingPicker.resizable(width=False, height=False)
-#DesingPicker.title("Design Picker")
-
 #####################################################################
 
-
-### Threads ###
-
-
-
-
-#####################################################################
-
-style = ttk.Style()
 
 ### Frames ###
 
@@ -255,22 +254,21 @@ entry_frame.grid(in_=root, row=1, column=1)
 entry_frame.grid_propagate(False)
 
 settings=Frame(root)
-settings.config(width=355, height=340)
+settings.config(width=575, height=340)
 settings.grid(in_=root, row=1, column=2)
 settings.grid_propagate(False)
 
-right_frame=Frame(root)
-right_frame.config(width=130, height=340)
-right_frame.grid(in_=root, row=1, column=3)
-right_frame.grid_propagate(False)
-
 lighthouse_frame=LabelFrame(settings, text="Google Lighthouse Settings")
-lighthouse_frame.config(width=350, height=260)
+lighthouse_frame.config(width=400, height=260)
 lighthouse_frame.grid(in_=settings, row = 1, column = 1)
 
-file_options_frame=ttk.LabelFrame(settings, text="File Options")
-file_options_frame.config(width=250, height=200)
-file_options_frame.grid(in_=settings, row = 2, column = 1)
+right_frame=Frame(settings)
+right_frame.config(width=175)
+right_frame.grid(in_=settings, row = 1, column = 2)
+
+file_options_frame=ttk.LabelFrame(right_frame, text="File Options")
+file_options_frame.config(width=160, height=200)
+file_options_frame.grid(in_=right_frame, row = 1, column = 2)
 file_options_frame.grid_propagate(False)
 
 
@@ -279,17 +277,20 @@ file_options_frame.grid_propagate(False)
 
 ### Widgets ###
 
-text=Text(root)
+text=Text(entry_frame)
 text.config(wrap="none", width=50, height=21, background="gray64", foreground="black")
-text.place(in_=entry_frame)
+text.grid(in_=entry_frame, row = 1, column = 1)
+
 #root.after(100, InputCheck)
 
-status=Text(right_frame)
-status.config(wrap="word", width=15, height=13, background="gray64", foreground="black")
-status.grid(in_=right_frame, row = 3, column = 1)
+status=Text(settings)
+status.config(wrap="word", width=50, height=4, background="gray64", foreground="black", state = DISABLED)
+status.grid(in_=settings, row = 2, column = 1, sticky = W, padx = 2, pady = 5)
+status.see(END)
 
-status_text=Label(right_frame, text="Status", foreground="black")
-status_text.grid(in_=right_frame, row=2, column=1)
+
+status_text=Label(settings, text="Status", foreground="black")
+status_text.grid(in_=settings, row=2, column=1, sticky = N+E)
 
 
 #####################################################################
@@ -301,20 +302,20 @@ status_text.grid(in_=right_frame, row=2, column=1)
 
 ###Buttons###
 
-OpenLink = Button(text, text="Linkdatei öffnen", command=file_open)
-OpenLink.place(in_=text, x=305, y=312)
+OpenLink = Button(entry_frame, text="Select Linkfile", command=file_open)
+OpenLink.grid(in_=entry_frame, row = 1, column = 1, sticky = S+E)
 
 ReportLocation = Button(file_options_frame, text="Select Savelocation", command=report_location)
-ReportLocation.grid(in_=file_options_frame, row = 1, column = 1)
+ReportLocation.grid(in_=file_options_frame, row = 1, column = 1, sticky = W, padx = 5)
 
-Start_Ligthouse = Button(right_frame, text="Starten", command=create_thread, width = 19)
-Start_Ligthouse.grid(in_=right_frame, row = 4, column = 1, pady=30)
+Start_Ligthouse = Button(right_frame, text="Start", command=create_thread, width = 19)
+Start_Ligthouse.grid(in_=right_frame, row = 2, column = 2)
 Start_Ligthouse.config(state=DISABLED)
 root.after(100, CheckInOut)
 
-Quit_All = Button(right_frame, text="Beenden", command=quit_all)
-Quit_All.grid(in_=right_frame, row = 1, column = 1, pady=10)
-
+Quit_All = Button(right_frame, text="Stop", command=quit_all, width = 19)
+Quit_All.grid(in_=right_frame, row = 3, column = 2)
+Quit_All.config(state= DISABLED)
 #####################################################################
 
 
@@ -336,10 +337,10 @@ def LighthouseSettings():
 ### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
 
 Keepfiles_Check = Checkbutton(settings, text="Keep duplicate files", variable=Keepfilesvar)
-Keepfiles_Check.grid(in_=file_options_frame, row = 1, column = 2)
+Keepfiles_Check.grid(in_=file_options_frame, row = 3, column = 1, sticky = W, padx = 5)
 
 Remember_Location = Checkbutton(settings, text="Remember Location?", variable=RememberLocationVar)
-Remember_Location.grid(in_=file_options_frame, row = 2, column = 1)
+Remember_Location.grid(in_=file_options_frame, row = 2, column = 1, sticky = W, padx = 5)
 Remember_Location.config(state=DISABLED)
 
 Device_Emulation = Checkbutton()
@@ -391,10 +392,10 @@ while True:
 
                 if answer == True:
                     os.system("npm install -g lighthouse")
-                    print("installed")
+
                     root.deiconify()
 
-                    DesingPicker.deiconify()
+
 
 
                 elif answer == False:
@@ -408,13 +409,9 @@ while True:
 
         except OSError:
             messagebox.showwarning("Warning","It seems like you don't have NPM installed. Please install it and restart the Program!")
-            quit_all()
+            SystemExit(0)
     elif config["DEFAULT"].getboolean("FirstRun") == False:
         root.deiconify()
-        #DesingPicker.deiconify()
-        #DesingPicker.lift()
-        #DesingPicker.attributes('-topmost',True)
-        #DesingPicker.attributes('-toolwindow',True)
         break
 
 # Check for saved Path #
@@ -422,7 +419,8 @@ if config["LIGHTHOUSE"]["output_path"] != "no path":
     RememberLocationVar.set(1)
     OldCheck = 1
     reportlocation = config["LIGHTHOUSE"]["output_path"]
-    print("reportlocation was set to saved path")
+    insert_status("Reportlocation was set to: "+reportlocation)
+
     CheckOut = True
     Remember_Location.config(state=NORMAL)
 else:
@@ -435,6 +433,3 @@ else:
 
 #####################################################################
 root.mainloop()
-
-
-#DesingPicker.mainloop()
