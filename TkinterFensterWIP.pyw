@@ -54,18 +54,17 @@ lighthouse_thread = threading.Thread(daemon=True)
 def CheckInOut():
     global CheckIn
     global CheckOut
-    if lighthouse_thread.is_alive() == False:
-        if CheckIn and CheckOut == True:
+
+    if CheckIn and CheckOut == True:
+        Start_Ligthouse.config(state= NORMAL)
+
+    elif CheckIn and CheckOut == False:
+        if has_started == False:
+            Start_Ligthouse.config(state= DISABLED)
+        else:
             Start_Ligthouse.config(state= NORMAL)
 
-
-        elif CheckIn and CheckOut == False:
-            if has_started == False:
-                Start_Ligthouse.config(state= DISABLED)
-            else:
-                pass
-
-        root.after(100, CheckInOut)
+    root.after(100, CheckInOut)
 
 #def InputCheck():
 #    global CheckIn
@@ -95,7 +94,6 @@ def remember_location():
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
 
-            print(" Output was set ")
             OldCheck = 1
 
 
@@ -104,7 +102,6 @@ def remember_location():
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
 
-            print(" Output was emptied ")
             OldCheck = 0
 
 
@@ -122,13 +119,10 @@ def file_open():                                                                
 
     linkfile = filedialog.askopenfile(initialdir = CWD,title = "Links.txt auswaehlen", filetypes=(("Textfile","*.txt"),("Alle Dateien","*.*")))
     if linkfile is None: # and textEdit == 0:
-        print("1")
         CheckIn = False
         return
 
     elif linkfile is not None:
-        print("2")
-        print(linkfile.name)
         file = open(linkfile.name, mode="r")
         num_lines = sum(1 for line in file)
         file = open(linkfile.name, mode="r")
@@ -138,7 +132,6 @@ def file_open():                                                                
 
 
 
-    print(num_lines)
 
     links = linkfile.read()
     text.delete(0.0,END)
@@ -156,9 +149,13 @@ def start_lighthouse():                                                         
     global CheckIn
     global CheckOut
     global text
+
+    CheckIn = False
+    CheckOut = False
     Quit_All.config(state= NORMAL)
     instantkill = False
     Start_Ligthouse.config(state= DISABLED)
+
     for url in file:
 
         if instantkill == True:
@@ -174,7 +171,11 @@ def start_lighthouse():                                                         
         filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
 
         if os.path.isfile(reportlocation + "/" + filename + ".html"):
-            print("EXISTS!")
+
+            if Keepfilesvar.get() == 1:
+                insert_status("File exists, will be kept!\n")
+            elif Keepfilesvar.get() == 0:
+                insert_status("File exists, will be replaced!\n")
             filenumber = 2
             while Keepfilesvar.get() == 1:
                 newfilename = filename + "{}".format(filenumber)
@@ -190,7 +191,7 @@ def start_lighthouse():                                                         
 
     has_started = True
     file = open(linkfile.name, mode="r")
-    CheckInOut()
+    Start_Ligthouse.config(state=NORMAL)
     if instantkill == True:
         insert_status("You can now safely exit the tool!")
 
@@ -227,6 +228,7 @@ def insert_status(message):
     status.config(state=NORMAL)
     status.insert(END, message)
     status.config(state=DISABLED)
+    status.see(END)
 #####################################################################
 
 
@@ -261,6 +263,7 @@ settings.grid_propagate(False)
 lighthouse_frame=LabelFrame(settings, text="Google Lighthouse Settings")
 lighthouse_frame.config(width=400, height=260)
 lighthouse_frame.grid(in_=settings, row = 1, column = 1)
+lighthouse_frame.grid_propagate(False)
 
 right_frame=Frame(settings)
 right_frame.config(width=175)
@@ -323,14 +326,17 @@ Quit_All.config(state= DISABLED)
 
 Keepfilesvar = IntVar()
 RememberLocationVar = IntVar()
-device_emulation = IntVar()
+
+DeviceEmulationVar = IntVar()
+DevEmuStr = "a"
 
 #####################################################################
 
 def LighthouseSettings():
     global DeviceEmulationVar
 
-
+    if DeviceEmulationVar.get() == 1:
+        reportlocation = config["LIGHTHOUSE"]["output_path"]
 
 
 
@@ -343,7 +349,8 @@ Remember_Location = Checkbutton(settings, text="Remember Location?", variable=Re
 Remember_Location.grid(in_=file_options_frame, row = 2, column = 1, sticky = W, padx = 5)
 Remember_Location.config(state=DISABLED)
 
-Device_Emulation = Checkbutton()
+Device_Emulation = Checkbutton(lighthouse_frame, text=" Enable Device Emulation?", variable=DeviceEmulationVar)
+Device_Emulation.grid(in_=lighthouse_frame, row = 1, column = 1, sticky = W, padx = (10,25), pady = 10)
 
 
 
@@ -419,7 +426,7 @@ if config["LIGHTHOUSE"]["output_path"] != "no path":
     RememberLocationVar.set(1)
     OldCheck = 1
     reportlocation = config["LIGHTHOUSE"]["output_path"]
-    insert_status("Reportlocation was set to: "+reportlocation)
+    insert_status("Reportlocation was set to: "+reportlocation + "\n")
 
     CheckOut = True
     Remember_Location.config(state=NORMAL)
