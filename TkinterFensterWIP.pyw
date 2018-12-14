@@ -66,20 +66,6 @@ def CheckInOut():
 
     root.after(100, CheckInOut)
 
-#def InputCheck():
-#    global CheckIn
-#    global text
-#    global file
-#    global textEdit
-#
-#    textEdit = text.edit_modified()
-#
-#    if textEdit == 1:
-#        CheckIn = True
-#
-#    elif textEdit == 0:
-#        CheckIn = False
-#    root.after(100, InputCheck)
 
 def remember_location():
     global OldCheck
@@ -149,7 +135,11 @@ def start_lighthouse():                                                         
     global CheckIn
     global CheckOut
     global text
+    global DevEmuStr
+    global throttlingVar
 
+
+    LighthouseSettings()
     CheckIn = False
     CheckOut = False
     Quit_All.config(state= NORMAL)
@@ -163,7 +153,7 @@ def start_lighthouse():                                                         
             CheckInOut()
             break
 
-        insert_status(url)
+        print(url)
 
         url = url.rstrip("\n")
         import time
@@ -173,9 +163,9 @@ def start_lighthouse():                                                         
         if os.path.isfile(reportlocation + "/" + filename + ".html"):
 
             if Keepfilesvar.get() == 1:
-                insert_status("File exists, will be kept!\n")
+                print("File exists, will be kept!\n")
             elif Keepfilesvar.get() == 0:
-                insert_status("File exists, will be replaced!\n")
+                print("File exists, will be replaced!\n")
             filenumber = 2
             while Keepfilesvar.get() == 1:
                 newfilename = filename + "{}".format(filenumber)
@@ -186,14 +176,14 @@ def start_lighthouse():                                                         
 
 
 
-        os.system("lighthouse --disable-device-emulation --throttling-method=provided --preset=perf --quiet --output-path={}/{}.html {}".format(reportlocation,filename,url))
+        os.system("lighthouse {} {} --preset=perf --quiet --output-path={}/{}.html {}".format(DevEmuStr,throttlingVar,reportlocation,filename,url))
 
 
     has_started = True
     file = open(linkfile.name, mode="r")
     Start_Ligthouse.config(state=NORMAL)
     if instantkill == True:
-        insert_status("You can now safely exit the tool!")
+        print("You can now safely exit the tool!")
 
     Quit_All.config(state= DISABLED)
 
@@ -203,7 +193,7 @@ def start_lighthouse():                                                         
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
     instantkill = True
-    insert_status("Stopping, please don't quit yet!\n")
+    print("Stopping, please don't quit yet!\n")
 
 def report_location():
     global CheckOut
@@ -219,12 +209,11 @@ def report_location():
         return
 
 def create_thread():
-    print("Thread Created")
     lighthouse_thread = threading.Thread(target=start_lighthouse)
     lighthouse_thread.start()
 
 
-def insert_status(message):
+def print(message):
     status.config(state=NORMAL)
     status.insert(END, message)
     status.config(state=DISABLED)
@@ -295,6 +284,12 @@ status.see(END)
 status_text=Label(settings, text="Status", foreground="black")
 status_text.grid(in_=settings, row=2, column=1, sticky = N+E)
 
+throttling_label=Label(lighthouse_frame, text="Throttling Method:", foreground="black")
+throttling_label.grid(in_=lighthouse_frame, row = 0, column = 2)
+
+throttling_menu = Combobox(lighthouse_frame, state="readonly", values=["No Throttling","Simulated"])
+throttling_menu.grid(in_=lighthouse_frame, row = 1, column = 2)
+
 
 #####################################################################
 
@@ -328,16 +323,25 @@ Keepfilesvar = IntVar()
 RememberLocationVar = IntVar()
 
 DeviceEmulationVar = IntVar()
-DevEmuStr = "a"
+
 
 #####################################################################
 
 def LighthouseSettings():
     global DeviceEmulationVar
+    global DevEmuStr
+    global throttlingVar
 
-    if DeviceEmulationVar.get() == 1:
-        reportlocation = config["LIGHTHOUSE"]["output_path"]
+    if DeviceEmulationVar.get() == 0:
+        DevEmuStr = "--disable-device-emulation"
+    elif DeviceEmulationVar.get() == 1:
+        DevEmuStr = ""
 
+    if throttling_menu.current() == 0:
+        throttlingVar = "--throttling-method=provided"
+
+    elif throttling_menu.current() == 1:
+        throttlingVar = "--throttling-method=devtools"
 
 
 ### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
@@ -350,7 +354,7 @@ Remember_Location.grid(in_=file_options_frame, row = 2, column = 1, sticky = W, 
 Remember_Location.config(state=DISABLED)
 
 Device_Emulation = Checkbutton(lighthouse_frame, text=" Enable Device Emulation?", variable=DeviceEmulationVar)
-Device_Emulation.grid(in_=lighthouse_frame, row = 1, column = 1, sticky = W, padx = (10,25), pady = 10)
+Device_Emulation.grid(in_=lighthouse_frame, row = 1, column = 1, sticky = W, padx = (10,25), pady = 5)
 
 
 
@@ -426,7 +430,7 @@ if config["LIGHTHOUSE"]["output_path"] != "no path":
     RememberLocationVar.set(1)
     OldCheck = 1
     reportlocation = config["LIGHTHOUSE"]["output_path"]
-    insert_status("Reportlocation was set to: "+reportlocation + "\n")
+    print("Reportlocation was set to: "+reportlocation + "\n")
 
     CheckOut = True
     Remember_Location.config(state=NORMAL)
