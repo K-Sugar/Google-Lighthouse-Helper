@@ -325,7 +325,6 @@ RememberLocationVar = IntVar()
 DeviceEmulationVar = IntVar()
 
 
-
 #####################################################################
 
 def LighthouseSettings():
