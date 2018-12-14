@@ -72,7 +72,7 @@ def remember_location():
     global config
 
 
-    if OldCheck != RememberLocationVar.get(): #or config["LIGHTHOUSE"]["output_path"]  != reportlocation:
+    if OldCheck != RememberLocationVar.get() or config["LIGHTHOUSE"]["output_path"]  != reportlocation:
 
         if RememberLocationVar.get() == 1:
 
@@ -183,7 +183,12 @@ def start_lighthouse():                                                         
     file = open(linkfile.name, mode="r")
     Start_Ligthouse.config(state=NORMAL)
     if instantkill == True:
-        print("You can now safely exit the tool!")
+        status.config(state=NORMAL)
+        status.delete(0.0,END)
+        status.config(state=DISABLED)
+        print("################################\n")
+        print("You can now safely exit the tool!\n")
+        print("################################\n")
 
     Quit_All.config(state= DISABLED)
 
@@ -193,7 +198,9 @@ def start_lighthouse():                                                         
 def quit_all():                                                                                                                                                 # Explains itself
     global instantkill
     instantkill = True
+    print("################################\n")
     print("Stopping, please don't quit yet!\n")
+    print("################################\n")
 
 def report_location():
     global CheckOut
@@ -201,7 +208,7 @@ def report_location():
     reportlocation = filedialog.askdirectory()
 
     if len(reportlocation) > 0:
-        print(reportlocation)
+        print("Reportlocation was set to " + reportlocation + "\n")
         Remember_Location.config(state=NORMAL)
         root.after(100,remember_location)
         CheckOut = True
