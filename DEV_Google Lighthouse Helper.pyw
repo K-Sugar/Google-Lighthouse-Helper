@@ -6,15 +6,16 @@ try:
     from tkinter.ttk import *
     from tkinter import filedialog
     from tkinter import messagebox
+    from datetime import date
     import configparser
     import threading
-    from multiprocessing import Process
     import os
 
 except:
     from Tkinter import *
     from Tkinter import filedialog
     from Tkinter import messagebox
+    from datetime import date
     import threading
     import configparser
     import os
@@ -33,7 +34,7 @@ config.read("config.ini")
 has_started = False
 OldCheck = 2
 num_lines = 0
-
+date = str(date.today())
 ### Design Vars ###
 
 
@@ -135,6 +136,7 @@ def start_lighthouse():                                                         
     global DevEmuStr
     global throttlingVar
     global presetVar
+    global CacheStr
 
     LighthouseSettings()
     CheckIn = False
@@ -156,7 +158,7 @@ def start_lighthouse():                                                         
         print(url)
         import time
         time.sleep(0.1)
-        filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")
+        filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")+date
 
         if os.path.isfile(reportlocation + "/" + filename + ".html"):
 
@@ -174,7 +176,7 @@ def start_lighthouse():                                                         
 
 
 
-        os.system("lighthouse --quiet {} {} {} {} --output-path={}/{}.html ".format(DevEmuStr,throttlingVar,presetVar,url,reportlocation,filename))
+        os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html ".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
 
 
     has_started = True
@@ -320,9 +322,8 @@ Quit_All.config(state= DISABLED)
 
 Keepfilesvar = IntVar()
 RememberLocationVar = IntVar()
-
 DeviceEmulationVar = IntVar()
-
+CacheVar = IntVar()
 
 #####################################################################
 
@@ -331,6 +332,8 @@ def LighthouseSettings():
     global DevEmuStr
     global throttlingVar
     global presetVar
+    global ChacheStr
+    global CacheStr
 
     if DeviceEmulationVar.get() == 0:
         DevEmuStr = "--emulated-form-factor=desktop"
@@ -351,6 +354,11 @@ def LighthouseSettings():
     elif preset_menu.current() == 1:
         presetVar = "--preset=perf"
 
+    if CacheVar.get() == 0:
+        CacheStr = ""
+    elif CacheVar.get() == 1:
+        CacheStr = " --disable-storage-reset"
+
 
 ### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
 
@@ -361,20 +369,31 @@ Remember_Location = Checkbutton(settings, text="Remember Location?", variable=Re
 Remember_Location.grid(in_=file_options_frame, row = 2, column = 1, sticky = W, padx = 5)
 Remember_Location.config(state=DISABLED)
 
-Device_Emulation = Checkbutton(lighthouse_frame, text=" Enable Device Emulation?", variable=DeviceEmulationVar)
-Device_Emulation.grid(in_=lighthouse_frame, row = 1, column = 1, sticky = W, padx = (10,25), pady = 5)
-
 throttling_label=Label(lighthouse_frame, text="Throttling Preset:", foreground="black")
-throttling_label.grid(in_=lighthouse_frame, row = 0, column = 2, sticky=W)
+throttling_label.grid(in_=lighthouse_frame, row = 0, column = 1, sticky=W, padx=10)
 
 throttling_menu = Combobox(lighthouse_frame, state="readonly", values=["No Throttling","Slow 4G","Fast 4G"])
-throttling_menu.grid(in_=lighthouse_frame, row = 1, column = 2)
+throttling_menu.grid(in_=lighthouse_frame, row = 0, column = 2)
 
 preset_label=Label(lighthouse_frame, text="Audit Preset:", foreground="black")
-preset_label.grid(in_=lighthouse_frame, row = 2, column = 2, sticky=W)
+preset_label.grid(in_=lighthouse_frame, row = 1, column = 1, sticky=W, padx=10, pady = 5)
 
 preset_menu = Combobox(lighthouse_frame, state="readonly", values=["Full","Performance"])
-preset_menu.grid(in_=lighthouse_frame, row = 3, column = 2)
+preset_menu.grid(in_=lighthouse_frame, row = 1, column = 2)
+
+Device_Emulation = Checkbutton(lighthouse_frame, text=" Enable Device Emulation?", variable=DeviceEmulationVar)
+Device_Emulation.grid(in_=lighthouse_frame, row = 2, column = 1, sticky = W, padx = (10,25), columnspan=2)
+
+Cache = Checkbutton(lighthouse_frame, text="Keep Cache", variable=CacheVar)
+Cache.grid(in_=lighthouse_frame, row = 3, column = 1, sticky = W, padx = (10,25), columnspan=2)
+
+Cooldown_label = Label(right_frame, text="Cooldown (s)", foreground="black")
+Cooldown_label.grid(in_=right_frame, row = 4, column = 2)
+
+Cooldown_Entry = Text(right_frame, width = 3, height = 1)
+Cooldown_Entry.grid(in_=right_frame, row = 4, column = 2)
+
+
 
 #adv_seperator=Separator(lighthouse_frame, orient="horizontal")
 #adv_seperator.grid(row=4, column=1, sticky="we")
