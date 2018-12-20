@@ -10,7 +10,7 @@ try:
     import configparser
     import threading
     import os
-
+    import time
 except:
     from Tkinter import *
     from Tkinter import filedialog
@@ -19,7 +19,7 @@ except:
     import threading
     import configparser
     import os
-
+    import time
 
 ### Variables ###
 
@@ -137,7 +137,7 @@ def start_lighthouse():                                                         
     global throttlingVar
     global presetVar
     global CacheStr
-
+    global time
     LighthouseSettings()
     CheckIn = False
     CheckOut = False
@@ -151,8 +151,11 @@ def start_lighthouse():                                                         
             file = open(linkfile.name, mode="r")
             CheckInOut()
             break
-
-
+        s = int(Cooldown_Entry.get("1.0","end-1c"))
+        for i in range(s):                                                                                                     # Cooldown um verfaelschung der Werte zu vermeiden
+            s -= 1
+            time.sleep(1)
+            print("Cooldown " + str(s) + "s")
 
         url = url.rstrip("\n")
         print(url)
@@ -267,7 +270,7 @@ right_frame.grid(in_=settings, row = 1, column = 2)
 
 file_options_frame=ttk.LabelFrame(right_frame, text="File Options")
 file_options_frame.config(width=160, height=200)
-file_options_frame.grid(in_=right_frame, row = 1, column = 2)
+file_options_frame.grid(in_=right_frame, row = 1, column = 2, columnspan = 2)
 file_options_frame.grid_propagate(False)
 
 
@@ -308,12 +311,12 @@ ReportLocation = Button(file_options_frame, text="Select Savelocation", command=
 ReportLocation.grid(in_=file_options_frame, row = 1, column = 1, sticky = W, padx = 5)
 
 Start_Ligthouse = Button(right_frame, text="Start", command=create_thread, width = 19)
-Start_Ligthouse.grid(in_=right_frame, row = 2, column = 2)
+Start_Ligthouse.grid(in_=right_frame, row = 2, column = 2, columnspan = 2)
 Start_Ligthouse.config(state=DISABLED)
 root.after(100, CheckInOut)
 
 Quit_All = Button(right_frame, text="Stop", command=quit_all, width = 19)
-Quit_All.grid(in_=right_frame, row = 3, column = 2)
+Quit_All.grid(in_=right_frame, row = 3, column = 2, columnspan = 2)
 Quit_All.config(state= DISABLED)
 #####################################################################
 
@@ -391,7 +394,7 @@ Cooldown_label = Label(right_frame, text="Cooldown (s)", foreground="black")
 Cooldown_label.grid(in_=right_frame, row = 4, column = 2)
 
 Cooldown_Entry = Text(right_frame, width = 3, height = 1)
-Cooldown_Entry.grid(in_=right_frame, row = 4, column = 2)
+Cooldown_Entry.grid(in_=right_frame, row = 4, column = 3)
 
 
 
