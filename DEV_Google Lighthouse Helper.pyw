@@ -144,6 +144,7 @@ def start_lighthouse():                                                         
     Quit_All.config(state= NORMAL)
     instantkill = False
     Start_Ligthouse.config(state= DISABLED)
+    s = int(Cooldown_Entry.get("1.0","end-1c"))
 
     for url in file:
 
@@ -151,11 +152,12 @@ def start_lighthouse():                                                         
             file = open(linkfile.name, mode="r")
             CheckInOut()
             break
-        s = int(Cooldown_Entry.get("1.0","end-1c"))
-        for i in range(s):                                                                                                     # Cooldown um verfaelschung der Werte zu vermeiden
-            s -= 1
-            time.sleep(1)
-            print("Cooldown " + str(s) + "s")
+
+        if s != None:
+            for i in range(s):                                                                                                     # Cooldown um verfaelschung der Werte zu vermeiden
+                s -= 1
+                time.sleep(1)
+                print("Cooldown " + str(s) + "s")
 
         url = url.rstrip("\n")
         print(url)
@@ -179,8 +181,10 @@ def start_lighthouse():                                                         
 
 
 
-        os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html ".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
-
+        try:
+            os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html ".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
+        except INVALID_URL:
+            print("Please provide a proper URL")
 
     has_started = True
     file = open(linkfile.name, mode="r")
@@ -345,13 +349,13 @@ def LighthouseSettings():
 
     if throttling_menu.current() == 0:
         throttlingVar = "--throttling-method=provided"
-
     elif throttling_menu.current() == 1:
         throttlingVar = "--throttling-method=devtools"
-
     elif throttling_menu.current() == 2:
         throttlingVar = "--throttling-method=simulate"
 
+    if preset_menu.current() == -1:
+        presetVar = ""
     if preset_menu.current() == 0:
         presetVar = "--preset=full"
     elif preset_menu.current() == 1:
@@ -395,7 +399,7 @@ Cooldown_label.grid(in_=right_frame, row = 4, column = 2)
 
 Cooldown_Entry = Text(right_frame, width = 3, height = 1)
 Cooldown_Entry.grid(in_=right_frame, row = 4, column = 3)
-
+Cooldown_Entry.insert(END, "0")
 
 
 #adv_seperator=Separator(lighthouse_frame, orient="horizontal")
