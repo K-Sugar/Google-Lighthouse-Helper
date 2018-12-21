@@ -155,16 +155,15 @@ def start_lighthouse():                                                         
             CheckInOut()
             break
         s = int(Cooldown_Entry.get("1.0","end-1c"))
-        if s != None:
+        if s != 0:
             for i in range(s):                                                                                                     # Cooldown um verfaelschung der Werte zu vermeiden
                 s -= 1
                 time.sleep(1)
                 print("Cooldown " + str(s) + "s")
 
         url = url.rstrip("\n")
+        print("\nCurrent URL:\n")
         print(url)
-        import time
-        time.sleep(0.1)
         filename = url.replace("https","").replace("/","-").replace("\n","").replace(":","").replace("--","")+date
 
         if os.path.isfile(reportlocation + "/" + filename + ".html"):
@@ -180,10 +179,11 @@ def start_lighthouse():                                                         
                     filename = newfilename
                     break
                 filenumber += 1
-        lh_url_ok = os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html ".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
+        lh_url_ok = os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html --chrome-flags='--headless'".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
         #os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html ".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
         if lh_url_ok >0:
             print("Please check the current URL")
+
             time.sleep(15)
 
     has_started = True
@@ -239,7 +239,7 @@ def print(message):
 
 root = Tk()
 root.withdraw()
-root.geometry("990x340")
+root.geometry("968x340")
 root.config(background="white")
 root.title("SEO Helper")
 #root.resizable(width=False, height=False)
@@ -255,7 +255,7 @@ root.grid_propagate(False)
 
 entry_frame=Frame(root)
 entry_frame.config(width=415, height=340)
-entry_frame.grid(in_=root, row=1, column=1, rowspan=2)
+entry_frame.grid(in_=root, row=1, column=1)
 entry_frame.grid_propagate(False)
 
 #settings=Frame(root)
@@ -264,21 +264,18 @@ entry_frame.grid_propagate(False)
 #settings.grid_propagate(False)
 
 middle_frame=Frame(root)
-middle_frame.config(width=395, height=340)
+middle_frame.config(width=410, height=340)
 middle_frame.grid(in_=root, row=1, column=2)
+middle_frame.grid_propagate(False)
 
 lighthouse_frame=LabelFrame(middle_frame, text="Google Lighthouse Settings")
 lighthouse_frame.config(width=400, height=140)
 lighthouse_frame.grid(in_=middle_frame, row = 1, column = 1,sticky=N)
 lighthouse_frame.grid_propagate(False)
 
-right_frame=Frame(root)
-right_frame.config(width=175, height=500)
-right_frame.grid(in_=root, row = 1, column = 3,rowspan=3,columnspan=2, sticky=N)
-
-file_options_frame=ttk.LabelFrame(right_frame, text="File Options")
-file_options_frame.config(width=175, height=340)
-file_options_frame.grid(in_=right_frame, row = 1, column = 2)
+file_options_frame=ttk.LabelFrame(root, text="File Options")
+file_options_frame.config(width=145, height=340)
+file_options_frame.grid(in_=root, row = 1, column = 3)
 file_options_frame.grid_propagate(False)
 
 advanced_frame=LabelFrame(middle_frame, text="Advanced")
@@ -321,15 +318,15 @@ OpenLink = Button(entry_frame, text="Select Linkfile", command=file_open)
 OpenLink.grid(in_=entry_frame, row = 1, column = 1, sticky = S+E)
 
 ReportLocation = Button(file_options_frame, text="Select Savelocation", command=report_location)
-ReportLocation.grid(in_=file_options_frame, row = 1, column = 1, sticky = W, padx = 5, columnspan = 2)
+ReportLocation.grid(in_=file_options_frame, row = 1, column = 1, sticky = W+E, columnspan = 2)
 
-Start_Ligthouse = Button(file_options_frame, text="Start", command=create_thread, width = 19)
-Start_Ligthouse.grid(in_=file_options_frame, row = 4, column = 1, columnspan = 2)
+Start_Ligthouse = Button(file_options_frame, text="Start", command=create_thread)
+Start_Ligthouse.grid(in_=file_options_frame, row = 4, column = 1, columnspan = 2, sticky=W+E)
 Start_Ligthouse.config(state=DISABLED)
 root.after(100, CheckInOut)
 
-Quit_All = Button(file_options_frame, text="Stop", command=quit_all, width = 19)
-Quit_All.grid(in_=file_options_frame, row = 5, column = 1, columnspan = 2)
+Quit_All = Button(file_options_frame, text="Stop", command=quit_all)
+Quit_All.grid(in_=file_options_frame, row = 5, column = 1, columnspan = 2,sticky=W+E)
 Quit_All.config(state= DISABLED)
 #####################################################################
 
@@ -379,10 +376,10 @@ def LighthouseSettings():
 ### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
 
 Keepfiles_Check = Checkbutton(file_options_frame, text="Keep duplicate files", variable=Keepfilesvar)
-Keepfiles_Check.grid(in_=file_options_frame, row = 3, column = 1, sticky = W, padx = 5, columnspan = 2)
+Keepfiles_Check.grid(in_=file_options_frame, row = 3, column = 1, sticky = W+E, columnspan = 2)
 
 Remember_Location = Checkbutton(file_options_frame, text="Remember Location?", variable=RememberLocationVar)
-Remember_Location.grid(in_=file_options_frame, row = 2, column = 1, sticky = W, padx = 5, columnspan = 2)
+Remember_Location.grid(in_=file_options_frame, row = 2, column = 1, sticky = W+E, columnspan = 2)
 Remember_Location.config(state=DISABLED)
 
 throttling_label=Label(lighthouse_frame, text="Throttling Preset:", foreground="black")
