@@ -11,6 +11,7 @@ try:
     import threading
     import os
     import time
+    import subprocess
 except:
     from Tkinter import *
     from Tkinter import filedialog
@@ -20,6 +21,7 @@ except:
     import configparser
     import os
     import time
+    import subprocess
 
 ### Variables ###
 
@@ -144,7 +146,7 @@ def start_lighthouse():                                                         
     Quit_All.config(state= NORMAL)
     instantkill = False
     Start_Ligthouse.config(state= DISABLED)
-    s = int(Cooldown_Entry.get("1.0","end-1c"))
+
 
     for url in file:
 
@@ -152,7 +154,7 @@ def start_lighthouse():                                                         
             file = open(linkfile.name, mode="r")
             CheckInOut()
             break
-
+        s = int(Cooldown_Entry.get("1.0","end-1c"))
         if s != None:
             for i in range(s):                                                                                                     # Cooldown um verfaelschung der Werte zu vermeiden
                 s -= 1
@@ -178,13 +180,11 @@ def start_lighthouse():                                                         
                     filename = newfilename
                     break
                 filenumber += 1
-
-
-
-        try:
-            os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html ".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
-        except INVALID_URL:
-            print("Please provide a proper URL")
+        lh_url_ok = os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html ".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
+        #os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html ".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
+        if lh_url_ok >0:
+            print("Please check the current URL")
+            time.sleep(15)
 
     has_started = True
     file = open(linkfile.name, mode="r")
@@ -242,7 +242,7 @@ root.withdraw()
 root.geometry("990x340")
 root.config(background="white")
 root.title("SEO Helper")
-root.resizable(width=False, height=False)
+#root.resizable(width=False, height=False)
 root.grid_propagate(False)
 
 
@@ -255,27 +255,36 @@ root.grid_propagate(False)
 
 entry_frame=Frame(root)
 entry_frame.config(width=415, height=340)
-entry_frame.grid(in_=root, row=1, column=1)
+entry_frame.grid(in_=root, row=1, column=1, rowspan=2)
 entry_frame.grid_propagate(False)
 
-settings=Frame(root)
-settings.config(width=575, height=340)
-settings.grid(in_=root, row=1, column=2)
-settings.grid_propagate(False)
+#settings=Frame(root)
+#settings.config(width=400, height=340)
+#settings.grid(in_=root, row=1, column=2)
+#settings.grid_propagate(False)
 
-lighthouse_frame=LabelFrame(settings, text="Google Lighthouse Settings")
-lighthouse_frame.config(width=400, height=260)
-lighthouse_frame.grid(in_=settings, row = 1, column = 1)
+middle_frame=Frame(root)
+middle_frame.config(width=395, height=340)
+middle_frame.grid(in_=root, row=1, column=2)
+
+lighthouse_frame=LabelFrame(middle_frame, text="Google Lighthouse Settings")
+lighthouse_frame.config(width=400, height=140)
+lighthouse_frame.grid(in_=middle_frame, row = 1, column = 1,sticky=N)
 lighthouse_frame.grid_propagate(False)
 
-right_frame=Frame(settings)
-right_frame.config(width=175)
-right_frame.grid(in_=settings, row = 1, column = 2)
+right_frame=Frame(root)
+right_frame.config(width=175, height=500)
+right_frame.grid(in_=root, row = 1, column = 3,rowspan=3,columnspan=2, sticky=N)
 
 file_options_frame=ttk.LabelFrame(right_frame, text="File Options")
-file_options_frame.config(width=160, height=200)
-file_options_frame.grid(in_=right_frame, row = 1, column = 2, columnspan = 2)
+file_options_frame.config(width=175, height=340)
+file_options_frame.grid(in_=right_frame, row = 1, column = 2)
 file_options_frame.grid_propagate(False)
+
+advanced_frame=LabelFrame(middle_frame, text="Advanced")
+advanced_frame.config(width=400, height=120)
+advanced_frame.grid(in_=middle_frame, row=2, column=1)
+advanced_frame.grid_propagate(False)
 
 
 #####################################################################
@@ -289,14 +298,14 @@ text.grid(in_=entry_frame, row = 1, column = 1)
 
 #root.after(100, InputCheck)
 
-status=Text(settings)
+status=Text(middle_frame)
 status.config(wrap="word", width=50, height=4, background="gray64", foreground="black", state = DISABLED)
-status.grid(in_=settings, row = 2, column = 1, sticky = W, padx = 2, pady = 5)
+status.grid(in_=middle_frame, row = 3, column = 1, sticky = W, padx = 2, pady = 5)
 status.see(END)
 
 
-status_text=Label(settings, text="Status", foreground="black")
-status_text.grid(in_=settings, row=2, column=1, sticky = N+E)
+status_text=Label(middle_frame, text="Status", foreground="black")
+status_text.grid(in_=middle_frame, row=3, column=1, sticky = N+E)
 
 
 #####################################################################
@@ -312,15 +321,15 @@ OpenLink = Button(entry_frame, text="Select Linkfile", command=file_open)
 OpenLink.grid(in_=entry_frame, row = 1, column = 1, sticky = S+E)
 
 ReportLocation = Button(file_options_frame, text="Select Savelocation", command=report_location)
-ReportLocation.grid(in_=file_options_frame, row = 1, column = 1, sticky = W, padx = 5)
+ReportLocation.grid(in_=file_options_frame, row = 1, column = 1, sticky = W, padx = 5, columnspan = 2)
 
-Start_Ligthouse = Button(right_frame, text="Start", command=create_thread, width = 19)
-Start_Ligthouse.grid(in_=right_frame, row = 2, column = 2, columnspan = 2)
+Start_Ligthouse = Button(file_options_frame, text="Start", command=create_thread, width = 19)
+Start_Ligthouse.grid(in_=file_options_frame, row = 4, column = 1, columnspan = 2)
 Start_Ligthouse.config(state=DISABLED)
 root.after(100, CheckInOut)
 
-Quit_All = Button(right_frame, text="Stop", command=quit_all, width = 19)
-Quit_All.grid(in_=right_frame, row = 3, column = 2, columnspan = 2)
+Quit_All = Button(file_options_frame, text="Stop", command=quit_all, width = 19)
+Quit_All.grid(in_=file_options_frame, row = 5, column = 1, columnspan = 2)
 Quit_All.config(state= DISABLED)
 #####################################################################
 
@@ -369,11 +378,11 @@ def LighthouseSettings():
 
 ### Google Lighthouse Settings ###                                                                                                                              # Everything for Google Lighthouse
 
-Keepfiles_Check = Checkbutton(settings, text="Keep duplicate files", variable=Keepfilesvar)
-Keepfiles_Check.grid(in_=file_options_frame, row = 3, column = 1, sticky = W, padx = 5)
+Keepfiles_Check = Checkbutton(file_options_frame, text="Keep duplicate files", variable=Keepfilesvar)
+Keepfiles_Check.grid(in_=file_options_frame, row = 3, column = 1, sticky = W, padx = 5, columnspan = 2)
 
-Remember_Location = Checkbutton(settings, text="Remember Location?", variable=RememberLocationVar)
-Remember_Location.grid(in_=file_options_frame, row = 2, column = 1, sticky = W, padx = 5)
+Remember_Location = Checkbutton(file_options_frame, text="Remember Location?", variable=RememberLocationVar)
+Remember_Location.grid(in_=file_options_frame, row = 2, column = 1, sticky = W, padx = 5, columnspan = 2)
 Remember_Location.config(state=DISABLED)
 
 throttling_label=Label(lighthouse_frame, text="Throttling Preset:", foreground="black")
@@ -394,11 +403,11 @@ Device_Emulation.grid(in_=lighthouse_frame, row = 2, column = 1, sticky = W, pad
 Cache = Checkbutton(lighthouse_frame, text="Keep Cache", variable=CacheVar)
 Cache.grid(in_=lighthouse_frame, row = 3, column = 1, sticky = W, padx = (10,25), columnspan=2)
 
-Cooldown_label = Label(right_frame, text="Cooldown (s)", foreground="black")
-Cooldown_label.grid(in_=right_frame, row = 4, column = 2)
+Cooldown_label = Label(file_options_frame, text="Cooldown (s)", foreground="black")
+Cooldown_label.grid(in_=file_options_frame, row = 6, column = 1)
 
-Cooldown_Entry = Text(right_frame, width = 3, height = 1)
-Cooldown_Entry.grid(in_=right_frame, row = 4, column = 3)
+Cooldown_Entry = Text(file_options_frame, width = 3, height = 1)
+Cooldown_Entry.grid(in_=file_options_frame, row = 6, column = 2)
 Cooldown_Entry.insert(END, "0")
 
 
