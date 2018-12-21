@@ -179,7 +179,7 @@ def start_lighthouse():                                                         
                     filename = newfilename
                     break
                 filenumber += 1
-        lh_url_ok = os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html --chrome-flags='--headless'".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
+        lh_url_ok = os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html --chrome-flags='--headless' > log.txt".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
         #os.system("lighthouse --quiet {} {} {} {} {} --output-path={}/{}.html ".format(DevEmuStr,throttlingVar,CacheStr,presetVar,url,reportlocation,filename))
         if lh_url_ok >0:
             print("Please check the current URL")
